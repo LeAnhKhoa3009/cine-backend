@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$PROJECT_DIR$/cine-authentication-service/pom.xml" />
+        <option value="$PROJECT_DIR$/cine-movie-service/pom.xml" />
+        <option value="$PROJECT_DIR$/cine-booking-service/pom.xml" />
+        <option value="$PROJECT_DIR$/cine-notification-service/pom.xml" />
+        <option value="$PROJECT_DIR$/cine-payment-service/pom.xml" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="graalvm-ce-17" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/out" />
+  </component>
+</project>
