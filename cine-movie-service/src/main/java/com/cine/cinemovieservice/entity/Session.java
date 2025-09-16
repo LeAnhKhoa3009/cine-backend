@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 
 @Entity
-@Table(name="sessions")
+@Table(name="session")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,8 +23,4 @@ public class Session extends BaseEntity {
     @JsonIgnore
     private Movie movie;
 
-    @ManyToOne
-    @JoinColumn(name = "room_id", nullable = false)
-    @JsonIgnore
-    private Room room;
 }
