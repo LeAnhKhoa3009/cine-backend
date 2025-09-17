@@ -3,6 +3,7 @@ package com.cine.cinemovieservice.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@SuperBuilder
 public class Genre extends BaseEntity {
 
     @Column(unique = true, nullable = false, length = 100)
@@ -20,4 +22,7 @@ public class Genre extends BaseEntity {
     @JsonIgnore
     @OneToMany(mappedBy = "genre", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MovieGenre> movieGenres = new ArrayList<>();
+
+    @Column(name = "icon", length = 100)
+    private String icon;
 }
