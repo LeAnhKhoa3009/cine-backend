@@ -2,6 +2,7 @@ package com.cine.cinemovieservice.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -12,8 +13,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class Movie extends BaseEntity {
+@SuperBuilder public class Movie extends BaseEntity {
 
     @Column(nullable = false, length = 255)
     private String title;
