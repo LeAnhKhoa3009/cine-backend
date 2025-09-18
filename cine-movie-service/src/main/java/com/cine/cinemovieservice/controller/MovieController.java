@@ -67,7 +67,7 @@ public class MovieController {
             }
         }
 
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<ApiResponse<Movie>> createMovie(
             @Valid @RequestBody CreateMovieRequestDTO request) {
         try {
