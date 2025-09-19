@@ -48,21 +48,21 @@ public class UserServiceImpl implements UserService {
     @Override
     public RetrieveUserReponseDTO saveUser(SaveUserRequestDTO saveUserRequestDTO) {
         validateSaveUserRequestDTO(saveUserRequestDTO);
-        if(saveUserRequestDTO.getId() != null) { //Update case
+        if (saveUserRequestDTO.getId() != null) { //Update case
             Optional<User> optionalUser = userRepository.findById(saveUserRequestDTO.getId());
-            if(!optionalUser.isPresent()){
+            if (!optionalUser.isPresent()) {
                 log.error("User not found with id {}", saveUserRequestDTO.getId());
                 throw new RuntimeException("User not found with id: " + saveUserRequestDTO.getId());
             }
 
             User existedUser = optionalUser.get();
-            if(!saveUserRequestDTO.getEmail().equals(existedUser.getEmail())) {
+            if (!saveUserRequestDTO.getEmail().equals(existedUser.getEmail())) {
                 log.error("Email cannot be changed");
                 throw new RuntimeException("Email cannot be changed");
             }
-        }else{
+        } else {
             Optional<User> optionalUser = userRepository.findByEmail(saveUserRequestDTO.getEmail());
-            if(optionalUser.isPresent()){ //Create case - verify email not exists
+            if (optionalUser.isPresent()) { //Create case - verify email not exists
                 log.error("This email has already been used");
                 throw new RuntimeException("This email has already been used");
             }
@@ -76,7 +76,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public DeactiveUserResponseDTO deactiveUser(String email) {
         Optional<User> optionalUser = userRepository.findByEmail(email);
-        if(optionalUser.isPresent()){
+        if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             user.setActive(false);
             userRepository.save(user);
@@ -91,7 +91,7 @@ public class UserServiceImpl implements UserService {
         validateSaveUserRequestDTO(registerRequestDTO);
         //Verify email not exists
         Optional<User> optionalUser = userRepository.findByEmail(registerRequestDTO.getEmail());
-        if(optionalUser.isPresent()){
+        if (optionalUser.isPresent()) {
             log.error("This email has already been used");
             throw new RuntimeException("This email has already been used");
         }
@@ -101,6 +101,7 @@ public class UserServiceImpl implements UserService {
 
         //Save user
         User user = userRepository.save(User.builder()
+                .name(registerRequestDTO.getName())
                 .email(registerRequestDTO.getEmail())
                 .password(hashedPassword)
                 .phoneNumber(registerRequestDTO.getPhoneNumber())
@@ -114,9 +115,10 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
-    private User createUserFromDto(SaveUserRequestDTO saveUserRequestDTO){
+    private User createUserFromDto(SaveUserRequestDTO saveUserRequestDTO) {
         return User.builder()
                 .id(saveUserRequestDTO.getId())
+                .name(saveUserRequestDTO.getName())
                 .email(saveUserRequestDTO.getEmail())
                 .password(passwordEncoder.encode(saveUserRequestDTO.getPassword()))
                 .phoneNumber(saveUserRequestDTO.getPhoneNumber())
@@ -125,9 +127,10 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
-    private RetrieveUserReponseDTO retrieveUserDtoFromUser(User user){
+    private RetrieveUserReponseDTO retrieveUserDtoFromUser(User user) {
         return RetrieveUserReponseDTO.builder()
                 .id(user.getId())
+                .name(user.getName())
                 .email(user.getEmail())
                 .password(user.getPassword())
                 .phoneNumber(user.getPhoneNumber())
@@ -136,8 +139,13 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
-    private void validateSaveUserRequestDTO(RegisterRequestDTO saveUserRequestDTO){
-        if(StringUtils.isBlank(saveUserRequestDTO.getEmail())){
+    private void validateSaveUserRequestDTO(RegisterRequestDTO saveUserRequestDTO) {
+        if (StringUtils.isBlank(saveUserRequestDTO.getEmail())) {
+            log.error("Name is required");
+            throw new IllegalArgumentException("Name is required");
+        }
+
+        if (StringUtils.isBlank(saveUserRequestDTO.getEmail())) {
             log.error("Email is required");
             throw new IllegalArgumentException("Email is required");
         }
@@ -147,7 +155,7 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("Invalid email format");
         }
 
-        if(StringUtils.isBlank(saveUserRequestDTO.getPassword())){
+        if (StringUtils.isBlank(saveUserRequestDTO.getPassword())) {
             log.error("Password is required");
             throw new IllegalArgumentException("Password is required");
         }
@@ -157,7 +165,7 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one digit, and one special character.");
         }
 
-        if(StringUtils.isBlank(saveUserRequestDTO.getPhoneNumber())){
+        if (StringUtils.isBlank(saveUserRequestDTO.getPhoneNumber())) {
             log.error("Phone number is required");
             throw new IllegalArgumentException("Phone number is required");
         }
