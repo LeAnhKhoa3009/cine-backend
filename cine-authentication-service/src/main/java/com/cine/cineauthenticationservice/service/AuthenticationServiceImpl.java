@@ -40,11 +40,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new RuntimeException("Password must not be empty");
         }
 
-        if (!PasswordValidator.isValid(authenticationRequestDTO.getPassword())) {
-            log.error("Invalid password format");
-            throw new RuntimeException("Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one digit, and one special character.");
-        }
-
         RetrieveUserReponseDTO userReponseDTO = userService.findByEmail(authenticationRequestDTO.getEmail());
 
         if (userReponseDTO == null) {
