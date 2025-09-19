@@ -1,21 +1,20 @@
 package com.cine.cineauthenticationservice.service;
 
-import com.cine.cineauthenticationservice.dto.DeactiveUserResponseDTO;
-import com.cine.cineauthenticationservice.dto.RetrieveUserReponseDTO;
-import com.cine.cineauthenticationservice.dto.SaveUserRequestDTO;
-import com.cine.cineauthenticationservice.dto.SaveUserResponseDTO;
+import com.cine.cineauthenticationservice.dto.*;
 import com.cine.cineauthenticationservice.entity.User;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface UserService {
-    User findById(Long id);
+    RetrieveUserReponseDTO findById(Long id);
 
-    List<User> fetchAllUsers();
+    Page<User> fetchAllUsers(Pageable pageable);
 
     RetrieveUserReponseDTO findByEmail(String email);
 
-    SaveUserResponseDTO saveUser(SaveUserRequestDTO saveUserDTO);
+    RetrieveUserReponseDTO saveUser(SaveUserRequestDTO saveUserDTO);
 
     DeactiveUserResponseDTO deactiveUser(String email);
+
+    RegisterResponseDTO registerUser(RegisterRequestDTO registerRequestDTO);
 }

@@ -4,22 +4,25 @@ import com.cine.cinemovieservice.dto.CreateGenreRequestDTO;
 import com.cine.cinemovieservice.dto.UpdateGenreRequestDTO;
 import com.cine.cinemovieservice.entity.Genre;
 import com.cine.cinemovieservice.repository.GenresRepository;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 @Service
-@Slf4j
+@Log4j2
 public class GenreServiceImpl implements GenreService{
-    @Autowired
-    private GenresRepository genresRepository;
+
+    private final GenresRepository genresRepository;
+
+    public GenreServiceImpl(GenresRepository genresRepository) {
+        this.genresRepository = genresRepository;
+    }
 
     @Override
     public List<Genre> getAllGenre() {
         try {
-            log.info("Getting all genres");
             return genresRepository.findAll();
 
         }catch (Exception e){
@@ -31,7 +34,6 @@ public class GenreServiceImpl implements GenreService{
     @Override
     public Optional<Genre> getDetails(Long id) {
         try {
-            log.info("Getting details of genre with id {}", id);
             return genresRepository.findById(id);
         }catch (Exception e){
             log.error(e.getMessage());
@@ -75,8 +77,6 @@ public class GenreServiceImpl implements GenreService{
             Genre genre = optionalGenre.get();
             genre.setDeleted(true);
             genresRepository.save(genre);
-
-            log.info("Soft deleted genre with id {}", id);
         } catch (Exception e) {
             log.error("Error soft deleting genre with id {}: {}", id, e.getMessage());
         }

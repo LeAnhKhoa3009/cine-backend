@@ -4,7 +4,7 @@ import com.cine.cinemovieservice.dto.CreateMovieRequestDTO;
 import com.cine.cinemovieservice.dto.UpdateMovieRequestDTO;
 import com.cine.cinemovieservice.entity.Movie;
 import com.cine.cinemovieservice.repository.MovieRepository;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,27 +12,28 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@Slf4j
-
+@Log4j2
 public class MovieServiceImpl implements MovieService{
-    @Autowired
-    private MovieRepository movieRepository;
+
+    private final MovieRepository movieRepository;
+
+    public MovieServiceImpl(MovieRepository movieRepository) {
+        this.movieRepository = movieRepository;
+    }
 
     @Override
     public List<Movie> getAllMovies() {
-        try {
-            log.info("Retrieving all movies");
-            return movieRepository.findAll();
-        }catch (Exception e){
-            log.error("An error occurred while retrieving all movies");
-            return List.of();
-        }
+            try {
+                return movieRepository.findAll();
+            }catch (Exception e){
+                log.error("An error occurred while retrieving all movies");
+                return List.of();
+            }
     }
 
     @Override
     public Optional<Movie> getDetails(Long id) {
         try {
-            log.info("Retrieving movie details with id {}", id);
             return movieRepository.findById(id);
         }catch (Exception e){
             log.error("An error occurred while retrieving movie details with id {}", id);
@@ -42,8 +43,8 @@ public class MovieServiceImpl implements MovieService{
 
     @Override
     public Movie save(CreateMovieRequestDTO createMovieRequestDTO) {
-        Movie movie = createMovieFromDto(createMovieRequestDTO);
-        return movieRepository.save(movie);
+            Movie movie = createMovieFromDto(createMovieRequestDTO);
+            return movieRepository.save(movie);
     }
 
     @Override
@@ -76,8 +77,6 @@ public class MovieServiceImpl implements MovieService{
             Movie movie = optionalMovie.get();
             movie.setDeleted(true);
             movieRepository.save(movie);
-
-            log.info("Soft deleted movie with id {}", id);
         } catch (Exception e) {
             log.error("Error soft deleting movie with id {}: {}", id, e.getMessage());
         }

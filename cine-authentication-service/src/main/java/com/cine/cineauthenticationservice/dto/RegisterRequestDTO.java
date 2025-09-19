@@ -9,9 +9,11 @@ import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-@SuperBuilder
-public class SaveUserRequestDTO extends RegisterRequestDTO{
-    private Long id;
+public class RegisterRequestDTO {
+    private String email;
+    private String password;
+    private String phoneNumber;
 }

@@ -22,8 +22,12 @@ import java.util.Optional;
 @CrossOrigin(origins = "*", maxAge = 3600)
 
 public class MovieController {
-    @Autowired
-    private MovieService movieService;
+
+    private final MovieService movieService;
+
+    public MovieController(MovieService movieService) {
+        this.movieService = movieService;
+    }
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<Movie>>> getAllMovies() {

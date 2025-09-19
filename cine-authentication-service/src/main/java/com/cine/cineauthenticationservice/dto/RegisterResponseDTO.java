@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Builder
 @Data
-public class VerifyResponseDTO {
-    private boolean valid;
+public class RegisterResponseDTO {
+    private Long id;
+    private String email;
 }

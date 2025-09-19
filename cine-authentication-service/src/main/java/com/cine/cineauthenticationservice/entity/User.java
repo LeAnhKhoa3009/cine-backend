@@ -4,14 +4,16 @@ import com.cine.cineauthenticationservice.enumeration.UserRole;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "[user]")
 @Getter
 @Setter
+@SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 public class User extends BaseEntity{
     @Column(unique = true, nullable = false)
     private String email;
