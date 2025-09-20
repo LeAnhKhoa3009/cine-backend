@@ -45,22 +45,37 @@ public class AuthenticationController {
     @PostMapping("/verify")
     public ResponseEntity<ApiResponse<VerifyResponseDTO>> verify(@RequestBody VerifyRequestDTO verifyRequestDTO) {
         try{
-            if (StringUtils.isBlank(verifyRequestDTO.getAccessToken())) {
-                throw new RuntimeException("Token must not be empty");
-            }
-
             return ResponseEntity
                     .status(HttpStatus.OK)
                     .body(ApiResponse.<VerifyResponseDTO>builder()
                             .status(ApiResponse.ApiResponseStatus.SUCCESS)
-                            .data(authenticationService.verify(verifyRequestDTO.getAccessToken()))
+                            .data(authenticationService.verify(verifyRequestDTO))
                             .build());
-        }catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(ApiResponse.<VerifyResponseDTO>builder()
                             .status(ApiResponse.ApiResponseStatus.ERROR)
-                            .message("Internal error. Please contact administrator.")
+                            .message(e.getMessage())
+                            .build());
+        }
+    }
+
+    @PostMapping("/authorize")
+    public ResponseEntity<ApiResponse<AuthorizeResponseDTO>> verify(@RequestBody AuthorizeRequestDTO authorizeRequestDTO) {
+        try{
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(ApiResponse.<AuthorizeResponseDTO>builder()
+                            .status(ApiResponse.ApiResponseStatus.SUCCESS)
+                            .data(authenticationService.authorize(authorizeRequestDTO))
+                            .build());
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.<AuthorizeResponseDTO>builder()
+                            .status(ApiResponse.ApiResponseStatus.ERROR)
+                            .message(e.getMessage())
                             .build());
         }
     }

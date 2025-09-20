@@ -1,11 +1,7 @@
 package com.cine.cineauthenticationservice.service;
 
-import com.cine.cineauthenticationservice.dto.AuthenticationRequestDTO;
-import com.cine.cineauthenticationservice.dto.AuthenticationResponseDTO;
-import com.cine.cineauthenticationservice.dto.RetrieveUserReponseDTO;
-import com.cine.cineauthenticationservice.dto.VerifyResponseDTO;
+import com.cine.cineauthenticationservice.dto.*;
 import com.cine.cineauthenticationservice.validator.EmailValidator;
-import com.cine.cineauthenticationservice.validator.PasswordValidator;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -60,19 +56,34 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return AuthenticationResponseDTO.builder()
                 .email(userReponseDTO.getEmail())
                 .role(userReponseDTO.getRole())
-                .accessToken(jwtService.generateToken(userReponseDTO.getEmail()))
+                .accessToken(jwtService.generate(userReponseDTO.getEmail(), userReponseDTO.getRole()))
                 .build();
     }
 
     @Override
-    public VerifyResponseDTO verify(String token) {
-        if(StringUtils.isBlank(token)){
-            log.error("Token is empty");
-            throw new RuntimeException("Token is empty");
+    public VerifyResponseDTO verify(VerifyRequestDTO verifyRequestDTO) {
+
+        if (StringUtils.isBlank(verifyRequestDTO.getAccessToken())) {
+            throw new RuntimeException("Token must not be empty");
         }
 
         return VerifyResponseDTO.builder()
-                .valid(jwtService.verifyToken(token))
+                .valid(jwtService.verify(verifyRequestDTO.getAccessToken()))
+                .build();
+    }
+
+    @Override
+    public AuthorizeResponseDTO authorize(AuthorizeRequestDTO authorizeRequestDTO) {
+        if (StringUtils.isBlank(authorizeRequestDTO.getAccessToken())) {
+            throw new RuntimeException("Token must not be empty");
+        }
+
+        if (authorizeRequestDTO.getRole() == null) {
+            throw new RuntimeException("Role must not be empty");
+        }
+
+        return AuthorizeResponseDTO.builder()
+                .valid(jwtService.authorize(authorizeRequestDTO.getAccessToken(), authorizeRequestDTO.getRole()))
                 .build();
     }
 }

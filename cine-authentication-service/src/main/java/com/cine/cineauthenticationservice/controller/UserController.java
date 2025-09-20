@@ -122,30 +122,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<ApiResponse<RegisterResponseDTO>> registerUser(
-            @Valid @RequestBody RegisterRequestDTO request) {
-        try {
-            RegisterResponseDTO savedUser = userService.registerUser(request);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(ApiResponse.<RegisterResponseDTO>builder()
-                            .status(ApiResponse.ApiResponseStatus.SUCCESS)
-                            .data(savedUser)
-                            .build());
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(ApiResponse.<RegisterResponseDTO>builder()
-                            .status(ApiResponse.ApiResponseStatus.FAILURE)
-                            .message(e.getMessage())
-                            .build());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.<RegisterResponseDTO>builder()
-                            .status(ApiResponse.ApiResponseStatus.ERROR)
-                            .message(e.getMessage())
-                            .build());
-        }
-    }
+
 
     @DeleteMapping("/{userId}")
     public ResponseEntity<ApiResponse<DeactiveUserResponseDTO>> deactivateUser(@PathVariable Long userId) {

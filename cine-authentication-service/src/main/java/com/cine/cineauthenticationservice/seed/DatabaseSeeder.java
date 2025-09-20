@@ -35,5 +35,20 @@ public class DatabaseSeeder implements CommandLineRunner {
 
             userRepository.save(adminUser);
         }
+
+        Optional<User> dummyUserOpt = userRepository.findByEmail("dummy.user@cine.com");
+        if(dummyUserOpt.isEmpty()) {
+            User dummyUser = User.builder()
+                    .email("dummy.user@cine.com")
+                    .role(UserRole.USER)
+                    .name("Dummy User")
+                    .phoneNumber("0592573325")
+                    .active(true)
+                    .password(passwordEncoder.encode("759426rR@"))
+                    .deleted(false)
+                    .build();
+
+            userRepository.save(dummyUser);
+        }
     }
 }
