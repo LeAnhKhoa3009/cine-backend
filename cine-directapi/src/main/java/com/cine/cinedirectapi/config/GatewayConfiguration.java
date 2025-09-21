@@ -44,6 +44,12 @@ public class GatewayConfiguration {
                                 .method("POST", "GET", "DELETE")
                                 .filters(jwtFilterSpec::filterForAdmin)
                                 .uri(serviceLocatorConfiguration.getAuthenticationServiceHost()))
+                .route("cine-movie-service", r ->
+                        r.path("/api/v1/movies/**", "/api/v1/genres/**")
+                                .and()
+                                .method("POST", "PUT", "GET", "DELETE")
+                                .filters(jwtFilterSpec::filterForAdmin)
+                                .uri(serviceLocatorConfiguration.getMovieServiceHost()))
                 .build();
     }
 }

@@ -22,6 +22,12 @@ import java.util.List;
     private String description;
 
     @Column(nullable = false)
+    private String poster;
+
+    @Column(nullable = false)
+    private Double rating;
+
+    @Column(nullable = false)
     private LocalDate premiereDate;
 
     @Column(nullable = false)

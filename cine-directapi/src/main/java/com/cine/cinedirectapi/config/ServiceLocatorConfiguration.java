@@ -11,5 +11,6 @@ public class ServiceLocatorConfiguration {
     @Value("${cine.service.authentication.url}")
     private String authenticationServiceHost;
 
-
+    @Value("${cine.service.movie.url}")
+    private String movieServiceHost;
 }
