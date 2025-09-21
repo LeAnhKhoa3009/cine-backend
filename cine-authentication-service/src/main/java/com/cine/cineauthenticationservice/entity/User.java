@@ -15,7 +15,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User extends BaseEntity{
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String name;
     @Column(unique = true, nullable = false)
     private String email;

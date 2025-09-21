@@ -20,7 +20,6 @@ public class AuthenticationController {
         this.authenticationService = authenticationService;
     }
 
-
     @PostMapping("/token")
     public ResponseEntity<ApiResponse<AuthenticationResponseDTO>> authenticate(@RequestBody AuthenticationRequestDTO authenticationRequestDTO) {
         try {
