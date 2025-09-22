@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -20,5 +21,6 @@ public class CreateMovieRequestDTO {
     private LocalDate premiereDate;
     private String description;
     private int duration;
+    private Set<Long> genres;
 }
 

@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+
 @Service
 @Log4j2
 public class GenreServiceImpl implements GenreService{
@@ -21,10 +23,9 @@ public class GenreServiceImpl implements GenreService{
     }
 
     @Override
-    public List<Genre> getAllGenre() {
+    public List<Genre> fetchAll() {
         try {
             return genresRepository.findAll();
-
         }catch (Exception e){
             log.error(e.getMessage());
             return List.of();
@@ -79,6 +80,16 @@ public class GenreServiceImpl implements GenreService{
             genresRepository.save(genre);
         } catch (Exception e) {
             log.error("Error soft deleting genre with id {}: {}", id, e.getMessage());
+        }
+    }
+
+    @Override
+    public List<Genre> fetchByIds(Set<Long> ids) {
+        try {
+            return genresRepository.findAllById(ids);
+        }catch (Exception e){
+            log.error(e.getMessage());
+            return List.of();
         }
     }
 

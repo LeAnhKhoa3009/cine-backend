@@ -19,10 +19,6 @@ public class Genre extends BaseEntity {
     @Column(unique = true, nullable = false, length = 100)
     private String name;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "genre", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MovieGenre> movieGenres = new ArrayList<>();
-
     @Column(name = "icon", length = 100)
     private String icon;
 }

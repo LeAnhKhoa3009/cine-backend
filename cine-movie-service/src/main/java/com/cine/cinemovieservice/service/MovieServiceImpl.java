@@ -2,23 +2,28 @@ package com.cine.cinemovieservice.service;
 
 import com.cine.cinemovieservice.dto.CreateMovieRequestDTO;
 import com.cine.cinemovieservice.dto.UpdateMovieRequestDTO;
+import com.cine.cinemovieservice.entity.Genre;
 import com.cine.cinemovieservice.entity.Movie;
 import com.cine.cinemovieservice.repository.MovieRepository;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Log4j2
 public class MovieServiceImpl implements MovieService{
 
     private final MovieRepository movieRepository;
+    private final GenreService genreService;
 
-    public MovieServiceImpl(MovieRepository movieRepository) {
+    public MovieServiceImpl(MovieRepository movieRepository, GenreService genreService) {
         this.movieRepository = movieRepository;
+        this.genreService = genreService;
     }
 
     @Override
@@ -83,19 +88,27 @@ public class MovieServiceImpl implements MovieService{
     }
 
     private Movie createMovieFromDto(CreateMovieRequestDTO createMovieRequestDTO) {
+
+        Set<Genre> genres = new HashSet<>(genreService.fetchByIds(createMovieRequestDTO.getGenres()));
+
         return Movie.builder()
                 .title(createMovieRequestDTO.getTitle())
                 .poster(createMovieRequestDTO.getPoster())
                 .description(createMovieRequestDTO.getDescription())
                 .duration(createMovieRequestDTO.getDuration())
+                .rating(createMovieRequestDTO.getRating())
                 .premiereDate(createMovieRequestDTO.getPremiereDate())
+                .genres(genres)
                 .build();
     }
+
     private void updateMovieFromDto(Movie targetMovie, UpdateMovieRequestDTO movieDto) {
         targetMovie.setTitle(movieDto.getTitle());
         targetMovie.setPoster(movieDto.getPoster());
         targetMovie.setDescription(movieDto.getDescription());
         targetMovie.setDuration(movieDto.getDuration());
+        targetMovie.setRating(movieDto.getRating());
         targetMovie.setPremiereDate(movieDto.getPremiereDate());
+        targetMovie.setGenres(movieDto.getGenres().stream().map(aLong -> Genre.builder().id(aLong).build()).collect(Collectors.toSet()));
     }
 }

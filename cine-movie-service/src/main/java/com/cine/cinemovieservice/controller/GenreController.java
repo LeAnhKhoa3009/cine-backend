@@ -31,7 +31,7 @@ public class GenreController {
             return ResponseEntity.ok(
                     ApiResponse.<List<Genre>>builder()
                             .status(ApiResponse.ApiResponseStatus.SUCCESS)
-                            .data(genreService.getAllGenre())
+                            .data(genreService.fetchAll())
                             .build()
             );
         } catch (Exception e) {
