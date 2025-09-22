@@ -86,6 +86,7 @@ public class MovieServiceImpl implements MovieService{
         return Movie.builder()
                 .title(createMovieRequestDTO.getTitle())
                 .poster(createMovieRequestDTO.getPoster())
+                .rating(createMovieRequestDTO.getRating())
                 .description(createMovieRequestDTO.getDescription())
                 .duration(createMovieRequestDTO.getDuration())
                 .premiereDate(createMovieRequestDTO.getPremiereDate())
@@ -96,6 +97,8 @@ public class MovieServiceImpl implements MovieService{
         targetMovie.setPoster(movieDto.getPoster());
         targetMovie.setDescription(movieDto.getDescription());
         targetMovie.setDuration(movieDto.getDuration());
+        targetMovie.setRating(movieDto.getRating());
         targetMovie.setPremiereDate(movieDto.getPremiereDate());
+
     }
 }
