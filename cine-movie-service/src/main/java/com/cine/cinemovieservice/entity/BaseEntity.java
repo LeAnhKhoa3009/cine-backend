@@ -28,6 +28,8 @@ public class BaseEntity {
     private LocalDateTime updatedAt;
 
     @JsonIgnore
+    @Builder.Default
+    @Column(nullable = false, columnDefinition = "boolean default false")
     private Boolean deleted = false;
 }
 
