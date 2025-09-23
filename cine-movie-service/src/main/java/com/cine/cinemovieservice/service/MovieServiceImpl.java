@@ -4,6 +4,7 @@ import com.cine.cinemovieservice.dto.CreateMovieRequestDTO;
 import com.cine.cinemovieservice.dto.UpdateMovieRequestDTO;
 import com.cine.cinemovieservice.entity.Movie;
 import com.cine.cinemovieservice.repository.MovieRepository;
+import com.cine.cinemovieservice.validator.MovieValidator;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,8 +44,13 @@ public class MovieServiceImpl implements MovieService{
 
     @Override
     public Movie save(CreateMovieRequestDTO createMovieRequestDTO) {
-            Movie movie = createMovieFromDto(createMovieRequestDTO);
-            return movieRepository.save(movie);
+        Movie movie = createMovieFromDto(createMovieRequestDTO);
+
+        if (!MovieValidator.isValid(movie)) {
+            throw new IllegalArgumentException("Invalid movie data when saving");
+        }
+
+        return movieRepository.save(movie);
     }
 
     @Override
@@ -54,12 +60,16 @@ public class MovieServiceImpl implements MovieService{
             if (optionalMovie.isPresent()) {
                 Movie movie = optionalMovie.get();
                 updateMovieFromDto(movie, updateMovieRequestDTO);
+                if (!MovieValidator.isValid(movie)) {
+                    throw new IllegalArgumentException("Invalid movie data when updating");
+                }
+
                 return movieRepository.save(movie);
             }
             log.error("Movie not found with id {}", updateMovieRequestDTO.getId());
             return null;
-        }catch(Exception e){
-            log.error(e.getMessage());
+        } catch (Exception e) {
+            log.error("Error updating movie: {}", e.getMessage(), e);
             return null;
         }
     }
