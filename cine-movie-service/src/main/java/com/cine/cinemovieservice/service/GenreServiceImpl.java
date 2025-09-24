@@ -4,6 +4,7 @@ import com.cine.cinemovieservice.dto.CreateGenreRequestDTO;
 import com.cine.cinemovieservice.dto.UpdateGenreRequestDTO;
 import com.cine.cinemovieservice.entity.Genre;
 import com.cine.cinemovieservice.repository.GenresRepository;
+import com.cine.cinemovieservice.validator.GenreValidator;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,9 +18,11 @@ import java.util.Set;
 public class GenreServiceImpl implements GenreService{
 
     private final GenresRepository genresRepository;
+    private final GenreValidator genreValidator ;
 
-    public GenreServiceImpl(GenresRepository genresRepository) {
+    public GenreServiceImpl(GenresRepository genresRepository, GenreValidator genreValidator) {
         this.genresRepository = genresRepository;
+        this.genreValidator = genreValidator;
     }
 
     @Override
@@ -45,25 +48,39 @@ public class GenreServiceImpl implements GenreService{
     @Override
     public Genre save(CreateGenreRequestDTO createGenreRequestDTO) {
         Genre genre = createGenreFromDTO(createGenreRequestDTO);
+
+        try {
+            genreValidator.validate(genre);
+        } catch (IllegalArgumentException e) {
+            log.error("Invalid genre data when saving: {}", e.getMessage(), e);
+            throw e;
+        }
+
         return genresRepository.save(genre);
     }
 
     @Override
     public Genre update(UpdateGenreRequestDTO updateGenreRequestDTO) {
-        try {
-            Optional<Genre> optionalGenre = genresRepository.findById(updateGenreRequestDTO.getId());
-            if (optionalGenre.isPresent()) {
-                Genre genre = optionalGenre.get();
-                updateGenreFromDTO(genre, updateGenreRequestDTO);
-                return genresRepository.save(genre);
+        Optional<Genre> optionalGenre = genresRepository.findById(updateGenreRequestDTO.getId());
+        if (optionalGenre.isPresent()) {
+            Genre genre = optionalGenre.get();
+            updateGenreFromDTO(genre, updateGenreRequestDTO);
+
+            try {
+                genreValidator.validate(genre);
+            } catch (IllegalArgumentException e) {
+                log.error("Invalid genre data when updating: {}", e.getMessage());
+                throw e;
             }
-            log.error("Genre not found with id {}", updateGenreRequestDTO.getId());
-            return null;
-        }catch(Exception e){
-            log.error(e.getMessage());
-            return null;
+
+            return genresRepository.save(genre);
         }
+
+        log.error("Genre not found with id {}", updateGenreRequestDTO.getId());
+        return null;
     }
+
+
 
     @Override
     public void delete(Long id) {
@@ -71,7 +88,7 @@ public class GenreServiceImpl implements GenreService{
             Optional<Genre> optionalGenre = genresRepository.findById(id);
 
             if (optionalGenre.isEmpty()) {
-                log.error("Movie not found with id {}", id);
+                log.error("Gerne not found with id {}", id);
                 return;
             }
 

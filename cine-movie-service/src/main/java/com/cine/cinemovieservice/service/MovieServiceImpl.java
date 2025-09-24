@@ -5,6 +5,7 @@ import com.cine.cinemovieservice.dto.UpdateMovieRequestDTO;
 import com.cine.cinemovieservice.entity.Genre;
 import com.cine.cinemovieservice.entity.Movie;
 import com.cine.cinemovieservice.repository.MovieRepository;
+import com.cine.cinemovieservice.validator.MovieValidator;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
@@ -48,8 +49,16 @@ public class MovieServiceImpl implements MovieService{
 
     @Override
     public Movie save(CreateMovieRequestDTO createMovieRequestDTO) {
-            Movie movie = createMovieFromDto(createMovieRequestDTO);
-            return movieRepository.save(movie);
+        Movie movie = createMovieFromDto(createMovieRequestDTO);
+
+        try {
+            MovieValidator.validate(movie);
+        } catch (IllegalArgumentException e) {
+            log.error("Invalid movie data when saving: {}", e.getMessage());
+            throw e;
+        }
+
+        return movieRepository.save(movie);
     }
 
     @Override
@@ -59,15 +68,24 @@ public class MovieServiceImpl implements MovieService{
             if (optionalMovie.isPresent()) {
                 Movie movie = optionalMovie.get();
                 updateMovieFromDto(movie, updateMovieRequestDTO);
+
+                try {
+                    MovieValidator.validate(movie);
+                } catch (IllegalArgumentException e) {
+                    log.error("Invalid movie data when updating: {}", e.getMessage());
+                    throw e;
+                }
+
                 return movieRepository.save(movie);
             }
             log.error("Movie not found with id {}", updateMovieRequestDTO.getId());
             return null;
-        }catch(Exception e){
-            log.error(e.getMessage());
+        } catch (Exception e) {
+            log.error("Error updating movie: {}", e.getMessage(), e);
             return null;
         }
     }
+
 
     @Override
     public void delete(Long id) {
