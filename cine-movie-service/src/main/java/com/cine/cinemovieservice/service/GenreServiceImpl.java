@@ -49,12 +49,7 @@ public class GenreServiceImpl implements GenreService{
     public Genre save(CreateGenreRequestDTO createGenreRequestDTO) {
         Genre genre = createGenreFromDTO(createGenreRequestDTO);
 
-        try {
-            genreValidator.validate(genre);
-        } catch (IllegalArgumentException e) {
-            log.error("Invalid genre data when saving: {}", e.getMessage(), e);
-            throw e;
-        }
+        genreValidator.validate(genre);
 
         return genresRepository.save(genre);
     }
@@ -66,16 +61,10 @@ public class GenreServiceImpl implements GenreService{
             Genre genre = optionalGenre.get();
             updateGenreFromDTO(genre, updateGenreRequestDTO);
 
-            try {
-                genreValidator.validate(genre);
-            } catch (IllegalArgumentException e) {
-                log.error("Invalid genre data when updating: {}", e.getMessage());
-                throw e;
-            }
+            genreValidator.validate(genre);
 
             return genresRepository.save(genre);
         }
-
         log.error("Genre not found with id {}", updateGenreRequestDTO.getId());
         return null;
     }
