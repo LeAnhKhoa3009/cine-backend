@@ -4,7 +4,9 @@ import com.cine.cinemovieservice.dto.CreateMovieRequestDTO;
 import com.cine.cinemovieservice.dto.UpdateMovieRequestDTO;
 import com.cine.cinemovieservice.entity.Genre;
 import com.cine.cinemovieservice.entity.Movie;
+import com.cine.cinemovieservice.repository.GenresRepository;
 import com.cine.cinemovieservice.repository.MovieRepository;
+import com.cine.cinemovieservice.validator.MovieValidator;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
@@ -20,10 +22,12 @@ public class MovieServiceImpl implements MovieService{
 
     private final MovieRepository movieRepository;
     private final GenreService genreService;
+    private final GenresRepository genresRepository;
 
-    public MovieServiceImpl(MovieRepository movieRepository, GenreService genreService) {
+    public MovieServiceImpl(MovieRepository movieRepository, GenreService genreService, GenresRepository genresRepository) {
         this.movieRepository = movieRepository;
         this.genreService = genreService;
+        this.genresRepository = genresRepository;
     }
 
     @Override
@@ -45,29 +49,31 @@ public class MovieServiceImpl implements MovieService{
             return Optional.empty();
         }
     }
-
     @Override
     public Movie save(CreateMovieRequestDTO createMovieRequestDTO) {
-            Movie movie = createMovieFromDto(createMovieRequestDTO);
-            return movieRepository.save(movie);
+        Movie movie = createMovieFromDto(createMovieRequestDTO);
+
+        MovieValidator.validate(movie);
+
+        return movieRepository.save(movie);
     }
 
     @Override
     public Movie update(UpdateMovieRequestDTO updateMovieRequestDTO) {
-        try {
-            Optional<Movie> optionalMovie = movieRepository.findById(updateMovieRequestDTO.getId());
-            if (optionalMovie.isPresent()) {
-                Movie movie = optionalMovie.get();
-                updateMovieFromDto(movie, updateMovieRequestDTO);
-                return movieRepository.save(movie);
-            }
-            log.error("Movie not found with id {}", updateMovieRequestDTO.getId());
-            return null;
-        }catch(Exception e){
-            log.error(e.getMessage());
-            return null;
+        Optional<Movie> optionalMovie = movieRepository.findById(updateMovieRequestDTO.getId());
+        if (optionalMovie.isPresent()) {
+            Movie movie = optionalMovie.get();
+            updateMovieFromDto(movie, updateMovieRequestDTO);
+
+            MovieValidator.validate(movie);
+
+            return movieRepository.save(movie);
         }
+        log.error("Movie not found with id {}", updateMovieRequestDTO.getId());
+        return null;
     }
+
+
 
     @Override
     public void delete(Long id) {
@@ -109,6 +115,7 @@ public class MovieServiceImpl implements MovieService{
         targetMovie.setDuration(movieDto.getDuration());
         targetMovie.setRating(movieDto.getRating());
         targetMovie.setPremiereDate(movieDto.getPremiereDate());
-        targetMovie.setGenres(movieDto.getGenres().stream().map(aLong -> Genre.builder().id(aLong).build()).collect(Collectors.toSet()));
+        targetMovie.setGenres(movieDto.getGenres().stream().map(genresRepository::findById).flatMap(Optional::stream).collect(Collectors.toSet())
+        );
     }
 }
