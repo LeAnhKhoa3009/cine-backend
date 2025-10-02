@@ -87,6 +87,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public RestoreUserResponseDTO restoreUser(String email) {
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            user.setActive(true);
+            userRepository.save(user);
+            return RestoreUserResponseDTO.builder().id(user.getId()).build();
+        }
+        log.error("User not found with email {}", email);
+        throw new RuntimeException("User not found with email " + email);
+    }
+
+    @Override
     public RegisterResponseDTO registerUser(RegisterRequestDTO registerRequestDTO) {
         validateSaveUserRequestDTO(registerRequestDTO);
         //Verify email not exists

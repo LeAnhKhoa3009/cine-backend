@@ -8,13 +8,14 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @MappedSuperclass
 @Data
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BaseEntity {
+public class BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -31,5 +32,14 @@ public class BaseEntity {
     @Builder.Default
     @Column(nullable = false, columnDefinition = "boolean default false")
     private Boolean deleted = false;
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hashCode(id);
+        result = 31 * result + Objects.hashCode(createdAt);
+        result = 31 * result + Objects.hashCode(updatedAt);
+        result = 31 * result + Objects.hashCode(deleted);
+        return result;
+    }
 }
 

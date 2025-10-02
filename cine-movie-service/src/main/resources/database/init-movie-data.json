@@ -1,0 +1,202 @@
+[
+  {
+    "id": 1,
+    "title": "Pacific Rim",
+    "description": "When legions of monstrous creatures, known as Kaiju, started rising from the sea, a war began that would take millions of lives and consume humanity's resources for years.",
+    "duration": 131,
+    "premiereDate": "2025-09-20",
+    "poster": "http://theposterdb.com/api/assets/61710/view",
+    "genres": [1, 2, 5],
+    "rating": 7.0
+  },
+  {
+    "id": 2,
+    "title": "Into The Spider-Verse",
+    "description": "Miles Morales becomes the Spider-Man of his reality, crossing paths with his counterparts from other dimensions to stop a threat to all realities.",
+    "duration": 117,
+    "premiereDate": "2025-09-23",
+    "poster": "https://theposterdb.com/api/assets/202574/view",
+    "genres": [3, 4, 6],
+    "rating": 8.4
+  },
+  {
+    "id": 3,
+    "title": "Thunderbolts",
+    "description": "A group of anti-heroes are brought together to undertake missions that require a more morally flexible approach.",
+    "duration": 120,
+    "premiereDate": "2025-09-25",
+    "poster": "https://theposterdb.com/api/assets/594541/view",
+    "genres": [2, 5, 7],
+    "rating": 7.5
+  },
+  {
+    "id": 4,
+    "title": "Avatar: The Way of Water",
+    "description": "Jake Sully lives with his newfound family formed on the planet of Pandora. However, they must fight to stay together.",
+    "duration": 192,
+    "premiereDate": "2025-09-28",
+    "poster": "https://theposterdb.com/api/assets/283716/view",
+    "genres": [1, 4, 8],
+    "rating": 8.0
+  },
+  {
+    "id": 5,
+    "title": "How to Train Your Dragon: Live Action",
+    "description": "A live-action adaptation of the beloved animated series about a young Viking who befriends a dragon.",
+    "duration": 120,
+    "premiereDate": "2025-10-01",
+    "poster": "https://theposterdb.com/api/assets/615539/view",
+    "genres": [3, 6, 8],
+    "rating": 8.1
+  },
+  {
+    "id": 6,
+    "title": "Just Like Heaven",
+    "description": "A man falls in love with a woman who turns out to be a spirit living in his apartment.",
+    "duration": 95,
+    "premiereDate": "2025-09-10",
+    "poster": "https://theposterdb.com/api/assets/441796/view",
+    "genres": [7, 9],
+    "rating": 6.7
+  },
+  {
+    "id": 7,
+    "title": "Tick, Tick... Boom!",
+    "description": "On the brink of turning 30, a struggling composer navigates love, friendship, and the pressures of life.",
+    "duration": 95,
+    "premiereDate": "2025-09-24",
+    "poster": "https://image.tmdb.org/t/p/original/DPmfcuR8fh8ROYXgdjrAjSGA0o.jpg",
+    "genres": [10, 11, 12],
+    "rating": 7.5
+  },
+  {
+    "id": 8,
+    "title": "The Social Network",
+    "description": "As Harvard students create the social networking site that would become known as Facebook, they must deal with the fallout of their success.",
+    "duration": 120,
+    "premiereDate": "2010-10-01",
+    "poster": "https://theposterdb.com/api/assets/465471/view",
+    "genres": [5, 9],
+    "rating": 7.7
+  },
+  {
+    "id": 9,
+    "title": "Inception",
+    "description": "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a CEO.",
+    "duration": 148,
+    "premiereDate": "2010-07-16",
+    "poster": "https://image.tmdb.com/t/p/original/ljsZTbVsrQSqZgWeep2B1QiDKuh.jpg",
+    "genres": [1, 2, 4],
+    "rating": 8.8
+  },
+  {
+    "id": 10,
+    "title": "The Matrix Resurrections",
+    "description": "Neo returns to the Matrix, where he must confront his past and the new threats posed by the machines.",
+    "duration": 148,
+    "premiereDate": "2021-12-22",
+    "poster": "https://image.tmdb.com/t/p/original/8c4a8kE7PizaGQQnditMmI1xbRp.jpg",
+    "genres": [1, 2, 4],
+    "rating": 6.8
+  },
+  {
+    "id": 11,
+    "title": "Dune",
+    "description": "A noble family becomes embroiled in a war for control over the galaxy's most valuable asset while its heir becomes troubled by visions of a dark future.",
+    "duration": 155,
+    "premiereDate": "2021-10-22",
+    "poster": "https://theposterdb.com/api/assets/168154/view",
+    "genres": [1, 4, 5],
+    "rating": 8.0
+  },
+  {
+    "id": 12,
+    "title": "Shang-Chi and the Legend of the Ten Rings",
+    "description": "Shang-Chi must confront the past he thought he left behind when he is drawn into the web of the mysterious Ten Rings organization.",
+    "duration": 132,
+    "premiereDate": "2021-09-03",
+    "poster": "https://theposterdb.com/api/assets/153776/view",
+    "genres": [2, 5, 6],
+    "rating": 7.4
+  },
+  {
+    "id": 13,
+    "title": "The Batman",
+    "description": "In his second year of fighting crime, Batman uncovers corruption in Gotham City that connects to his own family while facing the serial killer known as the Riddler.",
+    "duration": 155,
+    "premiereDate": "2022-03-04",
+    "poster": "https://theposterdb.com/api/assets/210624/view",
+    "genres": [2, 3, 5],
+    "rating": 8.3
+  },
+  {
+    "id": 14,
+    "title": "Guardians of the Galaxy Vol. 3",
+    "description": "The Guardians must fight to protect the universe and each other from a new threat.",
+    "duration": 150,
+    "premiereDate": "2023-05-05",
+    "poster": "https://image.tmdb.com/t/p/original/bVpTTg0NvaS905U2oXVr0awgCbM.jpg",
+    "genres": [2, 5, 6],
+    "rating": 8.0
+  },
+  {
+    "id": 15,
+    "title": "Black Panther: Wakanda Forever",
+    "description": "The leaders of Wakanda fight to protect their nation from intervening world powers in the wake of King T'Challa's death.",
+    "duration": 161,
+    "premiereDate": "2022-11-11",
+    "poster": "https://image.tmdb.com/t/p/w600_and_h900_bestv2/sv1xJUazXeYqALzczSZ3O6nkH75.jpg",
+    "genres": [1, 2, 5],
+    "rating": 7.5
+  },
+  {
+    "id": 16,
+    "title": "Spider-Man: No Way Home",
+    "description": "Peter Parker seeks help from Doctor Strange to restore his secret identity but inadvertently opens the multiverse.",
+    "duration": 148,
+    "premiereDate": "2021-12-17",
+    "poster": "https://image.tmdb.com/t/p/w600_and_h900_bestv2/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
+    "genres": [2, 4, 5],
+    "rating": 8.3
+  },
+  {
+    "id": 17,
+    "title": "Fast & Furious 9",
+    "description": "Dom Toretto and his crew must confront a deadly threat that could destroy everything they hold dear.",
+    "duration": 143,
+    "premiereDate": "2021-06-25",
+    "poster": "https://image.tmdb.com/t/p/w600_and_h900_bestv2/deEmLILTPejEb6OGsXRJ5MCvyDW.jpg",
+    "genres": [2, 3, 5],
+    "rating": 5.2
+  },
+  {
+    "id": 18,
+    "title": "The Flash",
+    "description": "Barry Allen uses his super speed to change the past, but his actions have unintended consequences.",
+    "duration": 155,
+    "premiereDate": "2023-06-16",
+    "poster": "https://image.tmdb.com/t/p/original/qZjIQ7jneEwngM6FlVPGeyal3rn.jpg",
+    "genres": [1, 2, 5],
+    "rating": 7.1
+  },
+  {
+    "id": 19,
+    "title": "Jurassic World: Rebirth",
+    "description": "Five years after the events of Jurassic World Dominion, covert operations expert Zora Bennett is contracted to lead a skilled team on a top-secret mission to secure genetic material from the world's three most massive dinosaurs. When Zora's operation intersects with a civilian family whose boating expedition was capsized, they all find themselves stranded on an island where they come face-to-face with a sinister, shocking discovery that's been hidden from the world for decades.",
+    "duration": 147,
+    "premiereDate": "2022-06-10",
+    "poster": "https://image.tmdb.com/t/p/original/1RICxzeoNCAO5NpcRMIgg1XT6fm.jpg",
+    "genres": [1, 2, 5],
+    "rating": 6.0
+  },
+  {
+    "id": 20,
+    "title": "Mission: Impossible - Dead Reckoning Part One",
+    "description": "Ethan Hunt and team continue their search for the terrifying AI known as the Entity — which has infiltrated intelligence networks all over the globe — with the world's governments and a mysterious ghost from Hunt's past on their trail. Joined by new allies and armed with the means to shut the Entity down for good, Hunt is in a race against time to prevent the world as we know it from changing forever.",
+    "duration": 163,
+    "premiereDate": "2025-09-27",
+    "poster": "https://theposterdb.com/api/assets/636092/view",
+    "genres": [2, 5, 6],
+    "rating": 8.2
+  }
+]

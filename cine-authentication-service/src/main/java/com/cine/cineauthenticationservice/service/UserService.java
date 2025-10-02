@@ -16,5 +16,7 @@ public interface UserService {
 
     DeactiveUserResponseDTO deactiveUser(String email);
 
+    RestoreUserResponseDTO restoreUser(String email);
+
     RegisterResponseDTO registerUser(RegisterRequestDTO registerRequestDTO);
 }

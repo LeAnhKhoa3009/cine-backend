@@ -20,10 +20,10 @@ import java.util.Set;
     @Column(nullable = false, length = 255)
     private String title;
 
-    @Column(nullable = true)
+    @Column(nullable = true, columnDefinition = "TEXT")
     private String description;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String poster;
 
     @Column(nullable = false)

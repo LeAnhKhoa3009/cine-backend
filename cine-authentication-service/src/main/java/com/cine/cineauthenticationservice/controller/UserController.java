@@ -150,4 +150,31 @@ public class UserController {
                             .build());
         }
     }
+
+    @PostMapping("/{userId}")
+    public ResponseEntity<ApiResponse<RestoreUserResponseDTO>> restoreUser(@PathVariable Long userId) {
+        try {
+            RetrieveUserReponseDTO user = userService.findById(userId);
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(ApiResponse.<RestoreUserResponseDTO>builder()
+                                .status(ApiResponse.ApiResponseStatus.FAILURE)
+                                .message("User not found with id " + userId)
+                                .build());
+            }
+            RestoreUserResponseDTO restoredUser = userService.restoreUser(user.getEmail());
+            return ResponseEntity.ok(
+                    ApiResponse.<RestoreUserResponseDTO>builder()
+                            .status(ApiResponse.ApiResponseStatus.SUCCESS)
+                            .data(restoredUser)
+                            .build()
+            );
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.<RestoreUserResponseDTO>builder()
+                            .status(ApiResponse.ApiResponseStatus.ERROR)
+                            .message(e.getMessage())
+                            .build());
+        }
+    }
 }

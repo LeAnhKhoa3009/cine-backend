@@ -1,0 +1,52 @@
+[
+  {
+    "id": 1,
+    "name": "Action",
+    "icon": "Sword"
+  },
+  {
+    "id": 2,
+    "name": "Adventure",
+    "icon": "Rocket"
+  },
+  {
+    "id": 3,
+    "name": "Animation",
+    "icon": "VenetianMask"
+  },
+  {
+    "id": 4,
+    "name": "Fantasy",
+    "icon": "Star"
+  },
+  {
+    "id": 5,
+    "name": "Science Fiction",
+    "icon": "Rocket"
+  },
+  {
+    "id": 6,
+    "name": "Comedy",
+    "icon": "Laugh"
+  },
+  {
+    "id": 7,
+    "name": "Romance",
+    "icon": "Heart"
+  },
+  {
+    "id": 8,
+    "name": "Family",
+    "icon": "Tag"
+  },
+  {
+    "id": 9,
+    "name": "Drama",
+    "icon": "Activity"
+  },
+  {
+    "id": 10,
+    "name": "Musical",
+    "icon": "Music"
+  }
+]
