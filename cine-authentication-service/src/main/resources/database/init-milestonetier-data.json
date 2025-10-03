@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "code": "BRONZE",
+    "name": "Bronze Tier",
+    "requiredPoints": 0
+  },
+  {
+    "id": 2,
+    "code": "SILVER",
+    "name": "Silver Tier",
+    "requiredPoints": 1000
+  },
+  {
+    "id": 3,
+    "code": "GOLD",
+    "name": "Gold Tier",
+    "requiredPoints": 5000
+  },
+  {
+    "id": 4,
+    "code": "PLATINUM",
+    "name": "Platinum Tier",
+    "requiredPoints": 10000
+  },
+  {
+    "id": 5,
+    "code": "DIAMOND",
+    "name": "Diamond Tier",
+    "requiredPoints": 20000
+  }
+]

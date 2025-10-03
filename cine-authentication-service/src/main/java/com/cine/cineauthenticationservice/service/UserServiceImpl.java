@@ -1,8 +1,11 @@
 package com.cine.cineauthenticationservice.service;
 
 import com.cine.cineauthenticationservice.dto.*;
+import com.cine.cineauthenticationservice.entity.MileStoneTier;
 import com.cine.cineauthenticationservice.entity.User;
+import com.cine.cineauthenticationservice.enumeration.MileStoneTierCode;
 import com.cine.cineauthenticationservice.enumeration.UserRole;
+import com.cine.cineauthenticationservice.repository.MileStoneTierRepository;
 import com.cine.cineauthenticationservice.repository.UserRepository;
 import com.cine.cineauthenticationservice.validator.EmailValidator;
 import com.cine.cineauthenticationservice.validator.PasswordValidator;
@@ -22,10 +25,12 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final MileStoneTierRepository mileStoneTierRepository;
 
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, MileStoneTierRepository mileStoneTierRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.mileStoneTierRepository = mileStoneTierRepository;
     }
 
     @Override
@@ -48,6 +53,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public RetrieveUserReponseDTO saveUser(SaveUserRequestDTO saveUserRequestDTO) {
         validateSaveUserRequestDTO(saveUserRequestDTO);
+
+        if(saveUserRequestDTO.getTierPoint() == null){
+            log.error("Tier Point is required");
+            throw new IllegalArgumentException("Tier Point is required");
+        }
+
         if (saveUserRequestDTO.getId() != null) { //Update case
             Optional<User> optionalUser = userRepository.findById(saveUserRequestDTO.getId());
             if (!optionalUser.isPresent()) {
@@ -67,7 +78,6 @@ public class UserServiceImpl implements UserService {
                 throw new RuntimeException("This email has already been used");
             }
         }
-
 
         User user = userRepository.save(createUserFromDto(saveUserRequestDTO));
         return Optional.ofNullable(user).map(this::retrieveUserDtoFromUser).orElse(null);
@@ -112,6 +122,9 @@ public class UserServiceImpl implements UserService {
         //Hash password
         String hashedPassword = passwordEncoder.encode(registerRequestDTO.getPassword());
 
+        //Assign first tier
+        MileStoneTier firstTier = mileStoneTierRepository.findByCode(MileStoneTierCode.BRONZE.name()).orElse(null);
+
         //Save user
         User user = userRepository.save(User.builder()
                 .name(registerRequestDTO.getName())
@@ -120,6 +133,8 @@ public class UserServiceImpl implements UserService {
                 .phoneNumber(registerRequestDTO.getPhoneNumber())
                 .role(UserRole.USER)
                 .active(true)
+                .tierPoint(0L)
+                .mileStoneTier(firstTier)
                 .build());
 
         return RegisterResponseDTO.builder()
@@ -136,6 +151,8 @@ public class UserServiceImpl implements UserService {
                 .password(passwordEncoder.encode(saveUserRequestDTO.getPassword()))
                 .phoneNumber(saveUserRequestDTO.getPhoneNumber())
                 .role(UserRole.USER)
+                .tierPoint(saveUserRequestDTO.getTierPoint())
+                .mileStoneTier(mileStoneTierRepository.findByCode(saveUserRequestDTO.getTierCode().name()).orElse(null))
                 .active(true)
                 .build();
     }
@@ -149,6 +166,12 @@ public class UserServiceImpl implements UserService {
                 .phoneNumber(user.getPhoneNumber())
                 .role(user.getRole())
                 .active(user.isActive())
+                .tierPoint(user.getTierPoint())
+                .tier(RetrieveUserTierResponseDTO.builder()
+                        .code(user.getMileStoneTier().getCode())
+                        .name(user.getMileStoneTier().getName())
+                        .requiredPoints(user.getMileStoneTier().getRequiredPoints())
+                        .build())
                 .build();
     }
 
@@ -177,6 +200,7 @@ public class UserServiceImpl implements UserService {
             log.error("Invalid password format");
             throw new RuntimeException("Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one digit, and one special character.");
         }
+
 
         if (StringUtils.isBlank(saveUserRequestDTO.getPhoneNumber())) {
             log.error("Phone number is required");

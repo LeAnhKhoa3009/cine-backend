@@ -1,9 +1,7 @@
 package com.cine.cineauthenticationservice.entity;
 
 import com.cine.cineauthenticationservice.enumeration.UserRole;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -20,6 +18,8 @@ public class User extends BaseEntity{
     @Column(unique = true, nullable = false)
     private String email;
     @Column(nullable = false)
+    private Long tierPoint = 0L;
+    @Column(nullable = false)
     private String password;
     @Column(nullable = false)
     private String phoneNumber;
@@ -27,4 +27,8 @@ public class User extends BaseEntity{
     private UserRole role;
     @Column(nullable = false)
     private boolean active = true;
+
+    @ManyToOne
+    @JoinColumn(name = "milestonetier_id")
+    private MileStoneTier mileStoneTier;
 }

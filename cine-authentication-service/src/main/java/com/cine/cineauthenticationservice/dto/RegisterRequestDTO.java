@@ -1,5 +1,6 @@
 package com.cine.cineauthenticationservice.dto;
 
+import com.cine.cineauthenticationservice.enumeration.MileStoneTierCode;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

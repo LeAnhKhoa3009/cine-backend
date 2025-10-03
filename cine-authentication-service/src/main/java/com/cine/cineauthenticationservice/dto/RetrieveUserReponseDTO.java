@@ -1,5 +1,6 @@
 package com.cine.cineauthenticationservice.dto;
 
+import com.cine.cineauthenticationservice.enumeration.MileStoneTierCode;
 import com.cine.cineauthenticationservice.enumeration.UserRole;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,6 +15,8 @@ public class RetrieveUserReponseDTO {
     private String email;
     private String password;
     private String phoneNumber;
+    private Long tierPoint;
     private UserRole role;
+    private RetrieveUserTierResponseDTO tier;
     private boolean active;
 }

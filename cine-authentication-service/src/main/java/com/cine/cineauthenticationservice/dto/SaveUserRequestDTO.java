@@ -1,5 +1,6 @@
 package com.cine.cineauthenticationservice.dto;
 
+import com.cine.cineauthenticationservice.enumeration.MileStoneTierCode;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,4 +15,6 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class SaveUserRequestDTO extends RegisterRequestDTO{
     private Long id;
+    private Long tierPoint;
+    private MileStoneTierCode tierCode;
 }
