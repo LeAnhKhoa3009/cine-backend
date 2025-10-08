@@ -6,6 +6,7 @@ import com.cine.cinemovieservice.entity.Room;
 import com.cine.cinemovieservice.entity.Seat;
 import com.cine.cinemovieservice.repository.RoomRepository;
 import com.cine.cinemovieservice.repository.SeatRepository;
+import com.cine.cinemovieservice.validator.RoomValidator;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,10 +21,12 @@ public class RoomServiceImpl implements RoomService {
 
     private final RoomRepository roomRepository;
     private final SeatRepository seatRepository;
+    private final RoomValidator roomValidator;
 
-    public RoomServiceImpl(RoomRepository roomRepository, SeatRepository seatRepository) {
+    public RoomServiceImpl(RoomRepository roomRepository, SeatRepository seatRepository, RoomValidator roomValidator) {
         this.roomRepository = roomRepository;
         this.seatRepository = seatRepository;
+        this.roomValidator = roomValidator;
     }
 
     @Override
@@ -51,6 +54,7 @@ public class RoomServiceImpl implements RoomService {
     @Override
     @Transactional
     public Room save(CreateRoomRequestDTO createRoomRequestDTO) {
+        roomValidator.validateRoom(createRoomRequestDTO.getRoomRow(), createRoomRequestDTO.getRoomColumn());
         Room room = createRoomFromDTO(createRoomRequestDTO);
         Set<Seat> seats = room.generateSeats();
         room.setSeats(seats);
@@ -63,13 +67,18 @@ public class RoomServiceImpl implements RoomService {
     public Room update(UpdateRoomRequestDTO updateRoomRequestDTO) {
 
         Optional<Room> optionalRoom = roomRepository.findById(updateRoomRequestDTO.getId());
+
         if (optionalRoom.isEmpty()) {
             log.error("Room not found with id {}", updateRoomRequestDTO.getId());
             return null;
         }
+
+        roomValidator.validateRoom(updateRoomRequestDTO.getRoomRow(), updateRoomRequestDTO.getRoomColumn());
+
         Room room = optionalRoom.get();
         boolean layoutChanged = isLayoutChanged(room, updateRoomRequestDTO);
         updateRoomFromDTO(room, updateRoomRequestDTO);
+
         if (layoutChanged) {
             regenerateSeats(room);
         }
@@ -119,6 +128,7 @@ public class RoomServiceImpl implements RoomService {
         boolean colChanged = !room.getRoomColumn().equals(dto.getRoomColumn());
         return rowChanged || colChanged;
     }
+
     private void regenerateSeats(Room room) {
         room.getSeats().clear();
         Set<Seat> newSeats = room.generateSeats();

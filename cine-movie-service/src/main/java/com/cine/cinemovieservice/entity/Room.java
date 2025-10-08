@@ -5,8 +5,10 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.Formula;
 
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
@@ -33,37 +35,43 @@ public class Room extends BaseEntity {
     private Set<Seat> seats = new HashSet<>();
 
     @Transient
-    public int getTotalSeats() {
-        if (roomRow == null || roomRow.isEmpty() || roomColumn == null) {
+    public Integer getTotalSeats() {
+        if (roomRow == null || roomColumn == null) {
             return 0;
         }
-        return roomRow.length() * roomColumn;
+        char lastRow = Character.toUpperCase(roomRow.trim().charAt(0));
+        if (lastRow < 'A' || lastRow > 'O') {
+            return 0;
+        }
+        int totalRows = lastRow - 'A' + 1;
+        return totalRows * roomColumn;
     }
 
     @Transient
     public Set<Seat> generateSeats() {
-        Set<Seat> generatedSeats = new HashSet<>();
-        if (roomRow == null || roomRow.isEmpty() || roomColumn == null) {
-            return generatedSeats;
-        }
+        Set<Seat> generatedSeats = new LinkedHashSet<>();
 
-        int rowIndex = 1;
-        for (char rowLetter : roomRow.toCharArray()) {
+        String maxRow = roomRow.trim().toUpperCase();
+        char maxRowChar = maxRow.charAt(0);
+
+        for (char rowChar = 'A'; rowChar <= maxRowChar; rowChar++) {
             for (int col = 1; col <= roomColumn; col++) {
                 Seat seat = Seat.builder()
-                        .seatRow(String.valueOf(rowLetter))
+                        .seatRow(String.valueOf(rowChar))
                         .seatColumn(col)
-                        .seatCode(rowLetter + String.valueOf(col))
+                        .seatCode(rowChar + String.valueOf(col))
                         .premium(false)
                         .empty(true)
                         .room(this)
                         .build();
                 generatedSeats.add(seat);
             }
-            rowIndex++;
         }
+
         return generatedSeats;
     }
+
+
 }
 
 
