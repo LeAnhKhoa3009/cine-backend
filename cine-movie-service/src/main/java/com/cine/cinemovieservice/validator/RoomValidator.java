@@ -5,9 +5,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class RoomValidator {
 
-    private final int MAX_ROWS = 15;
-    private final int MAX_COLUMNS = 20;
-
     public void validateRoom(String row, Integer col) {
 
         if (row == null || row.isBlank()) {
