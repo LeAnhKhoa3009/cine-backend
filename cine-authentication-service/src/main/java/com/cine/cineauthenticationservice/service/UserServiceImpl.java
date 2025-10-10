@@ -52,14 +52,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public RetrieveUserReponseDTO saveUser(SaveUserRequestDTO saveUserRequestDTO) {
-        validateSaveUserRequestDTO(saveUserRequestDTO);
 
         if(saveUserRequestDTO.getTierPoint() == null){
             log.error("Tier Point is required");
             throw new IllegalArgumentException("Tier Point is required");
         }
 
+        String newPassword = saveUserRequestDTO.getPassword();
+        boolean newPasswordProvided = !StringUtils.isBlank(newPassword);
         if (saveUserRequestDTO.getId() != null) { //Update case
+            validateSaveUserRequestDTO(saveUserRequestDTO, newPasswordProvided);
             Optional<User> optionalUser = userRepository.findById(saveUserRequestDTO.getId());
             if (!optionalUser.isPresent()) {
                 log.error("User not found with id {}", saveUserRequestDTO.getId());
@@ -71,7 +73,12 @@ public class UserServiceImpl implements UserService {
                 log.error("Email cannot be changed");
                 throw new RuntimeException("Email cannot be changed");
             }
+
+            if(!newPasswordProvided){
+                newPassword = passwordEncoder.encode(existedUser.getPassword());
+            }
         } else {
+            validateSaveUserRequestDTO(saveUserRequestDTO, true);
             Optional<User> optionalUser = userRepository.findByEmail(saveUserRequestDTO.getEmail());
             if (optionalUser.isPresent()) { //Create case - verify email not exists
                 log.error("This email has already been used");
@@ -80,6 +87,7 @@ public class UserServiceImpl implements UserService {
         }
 
         User user = userRepository.save(createUserFromDto(saveUserRequestDTO));
+        user.setPassword(newPassword);
         return Optional.ofNullable(user).map(this::retrieveUserDtoFromUser).orElse(null);
     }
 
@@ -111,7 +119,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public RegisterResponseDTO registerUser(RegisterRequestDTO registerRequestDTO) {
-        validateSaveUserRequestDTO(registerRequestDTO);
+        validateSaveUserRequestDTO(registerRequestDTO, true);
         //Verify email not exists
         Optional<User> optionalUser = userRepository.findByEmail(registerRequestDTO.getEmail());
         if (optionalUser.isPresent()) {
@@ -148,7 +156,7 @@ public class UserServiceImpl implements UserService {
                 .id(saveUserRequestDTO.getId())
                 .name(saveUserRequestDTO.getName())
                 .email(saveUserRequestDTO.getEmail())
-                .password(passwordEncoder.encode(saveUserRequestDTO.getPassword()))
+                .password(  passwordEncoder.encode(saveUserRequestDTO.getPassword()))
                 .phoneNumber(saveUserRequestDTO.getPhoneNumber())
                 .role(UserRole.USER)
                 .tierPoint(saveUserRequestDTO.getTierPoint())
@@ -175,7 +183,7 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
-    private void validateSaveUserRequestDTO(RegisterRequestDTO saveUserRequestDTO) {
+    private void validateSaveUserRequestDTO(RegisterRequestDTO saveUserRequestDTO, boolean shouldValidatePassword) {
         if (StringUtils.isBlank(saveUserRequestDTO.getEmail())) {
             log.error("Name is required");
             throw new IllegalArgumentException("Name is required");
@@ -196,7 +204,7 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("Password is required");
         }
 
-        if (!PasswordValidator.isValid(saveUserRequestDTO.getPassword())) {
+        if (shouldValidatePassword && !PasswordValidator.isValid(saveUserRequestDTO.getPassword())) {
             log.error("Invalid password format");
             throw new RuntimeException("Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one digit, and one special character.");
         }
