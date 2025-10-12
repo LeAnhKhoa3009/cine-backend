@@ -75,7 +75,7 @@ public class UserServiceImpl implements UserService {
             }
 
             if(!newPasswordProvided){
-                newPassword = passwordEncoder.encode(existedUser.getPassword());
+                newPassword = existedUser.getPassword();
             }
         } else {
             validateSaveUserRequestDTO(saveUserRequestDTO, true);
@@ -84,10 +84,10 @@ public class UserServiceImpl implements UserService {
                 log.error("This email has already been used");
                 throw new RuntimeException("This email has already been used");
             }
+            newPassword = passwordEncoder.encode(newPassword);
         }
 
-        User user = userRepository.save(createUserFromDto(saveUserRequestDTO));
-        user.setPassword(newPassword);
+        User user = userRepository.save(createUserFromDto(saveUserRequestDTO, newPassword));
         return Optional.ofNullable(user).map(this::retrieveUserDtoFromUser).orElse(null);
     }
 
@@ -151,18 +151,27 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
-    private User createUserFromDto(SaveUserRequestDTO saveUserRequestDTO) {
+    private User createUserFromDto(SaveUserRequestDTO saveUserRequestDTO, String encodedPassword) {
+        String tierCode = String.valueOf(saveUserRequestDTO.getTierCode());
+        if (tierCode == null || tierCode.isEmpty()) {
+            tierCode = MileStoneTierCode.BRONZE.name();
+        }
+        MileStoneTier tier = mileStoneTierRepository.findByCode(tierCode).orElse(null);
+        if (tier == null) {
+            log.warn("Tier not found for code '{}', defaulting to BRONZE", tierCode);
+            tier = mileStoneTierRepository.findByCode(MileStoneTierCode.BRONZE.name()).orElse(null);
+        }
         return User.builder()
-                .id(saveUserRequestDTO.getId())
-                .name(saveUserRequestDTO.getName())
-                .email(saveUserRequestDTO.getEmail())
-                .password(  passwordEncoder.encode(saveUserRequestDTO.getPassword()))
-                .phoneNumber(saveUserRequestDTO.getPhoneNumber())
-                .role(UserRole.USER)
-                .tierPoint(saveUserRequestDTO.getTierPoint())
-                .mileStoneTier(mileStoneTierRepository.findByCode(saveUserRequestDTO.getTierCode().name()).orElse(null))
-                .active(true)
-                .build();
+            .id(saveUserRequestDTO.getId())
+            .name(saveUserRequestDTO.getName())
+            .email(saveUserRequestDTO.getEmail())
+            .password(encodedPassword)
+            .phoneNumber(saveUserRequestDTO.getPhoneNumber())
+            .role(UserRole.USER)
+            .tierPoint(saveUserRequestDTO.getTierPoint())
+            .mileStoneTier(tier)
+            .active(true)
+            .build();
     }
 
     private RetrieveUserReponseDTO retrieveUserDtoFromUser(User user) {
@@ -184,7 +193,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private void validateSaveUserRequestDTO(RegisterRequestDTO saveUserRequestDTO, boolean shouldValidatePassword) {
-        if (StringUtils.isBlank(saveUserRequestDTO.getEmail())) {
+        if (StringUtils.isBlank(saveUserRequestDTO.getName())) {
             log.error("Name is required");
             throw new IllegalArgumentException("Name is required");
         }
@@ -199,16 +208,17 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("Invalid email format");
         }
 
-        if (StringUtils.isBlank(saveUserRequestDTO.getPassword())) {
+        // Only require password if shouldValidatePassword is true
+        if (shouldValidatePassword && StringUtils.isBlank(saveUserRequestDTO.getPassword())) {
             log.error("Password is required");
             throw new IllegalArgumentException("Password is required");
         }
 
+        // Only validate password format if shouldValidatePassword is true
         if (shouldValidatePassword && !PasswordValidator.isValid(saveUserRequestDTO.getPassword())) {
             log.error("Invalid password format");
             throw new RuntimeException("Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one digit, and one special character.");
         }
-
 
         if (StringUtils.isBlank(saveUserRequestDTO.getPhoneNumber())) {
             log.error("Phone number is required");
