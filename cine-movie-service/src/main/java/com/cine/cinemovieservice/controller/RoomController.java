@@ -2,6 +2,7 @@ package com.cine.cinemovieservice.controller;
 
 import com.cine.cinemovieservice.dto.ApiResponse;
 import com.cine.cinemovieservice.dto.CreateRoomRequestDTO;
+import com.cine.cinemovieservice.dto.RoomResponseDTO;
 import com.cine.cinemovieservice.dto.UpdateRoomRequestDTO;
 import com.cine.cinemovieservice.entity.Room;
 import com.cine.cinemovieservice.service.RoomService;
@@ -28,17 +29,17 @@ public class RoomController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<Room>>> getAllRooms() {
+    public ResponseEntity<ApiResponse<List<RoomResponseDTO>>> getAllRooms() {
         try {
-            return ResponseEntity
-                    .ok(ApiResponse.<List<Room>>builder()
+            return ResponseEntity.ok(
+                    ApiResponse.<List<RoomResponseDTO>>builder()
                             .status(ApiResponse.ApiResponseStatus.SUCCESS)
                             .data(roomService.fetchAll())
-                            .build());
+                            .build()
+            );
         } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.<List<Room>>builder()
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.<List<RoomResponseDTO>>builder()
                             .status(ApiResponse.ApiResponseStatus.ERROR)
                             .message("Internal error. Please contact administrator.")
                             .build());
@@ -46,28 +47,29 @@ public class RoomController {
     }
 
     @GetMapping("/{roomId}")
-    public ResponseEntity<ApiResponse<Room>> getRoomById(@PathVariable @NotNull Long roomId) {
+    public ResponseEntity<ApiResponse<RoomResponseDTO>> getRoomById(@PathVariable @NotNull Long roomId) {
         try {
             return roomService.getDetails(roomId)
-                    .map(room -> ResponseEntity
-                            .ok(ApiResponse.<Room>builder()
+                    .map(room -> ResponseEntity.ok(
+                            ApiResponse.<RoomResponseDTO>builder()
                                     .status(ApiResponse.ApiResponseStatus.SUCCESS)
                                     .data(room)
-                                    .build()))
+                                    .build()
+                    ))
                     .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
-                            .body(ApiResponse.<Room>builder()
+                            .body(ApiResponse.<RoomResponseDTO>builder()
                                     .status(ApiResponse.ApiResponseStatus.FAILURE)
                                     .message("Room not found with id " + roomId)
                                     .build()));
         } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.<Room>builder()
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.<RoomResponseDTO>builder()
                             .status(ApiResponse.ApiResponseStatus.ERROR)
                             .message("Internal error. Please contact administrator.")
                             .build());
         }
     }
+
 
     @PostMapping
     public ResponseEntity<ApiResponse<Room>> createRoom(
@@ -103,7 +105,7 @@ public class RoomController {
     @DeleteMapping("/{roomId}")
     public ResponseEntity<ApiResponse<Room>> deleteRoom(@PathVariable @NotNull Long roomId) {
         try {
-            Optional<Room> isActive = roomService.getDetails(roomId);
+            Optional<RoomResponseDTO> isActive = roomService.getDetails(roomId);
             roomService.delete(roomId);
 
             if (isActive.isEmpty()) {

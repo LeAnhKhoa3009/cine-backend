@@ -1,6 +1,7 @@
 package com.cine.cinemovieservice.service;
 
 import com.cine.cinemovieservice.dto.CreateRoomRequestDTO;
+import com.cine.cinemovieservice.dto.RoomResponseDTO;
 import com.cine.cinemovieservice.dto.UpdateRoomRequestDTO;
 import com.cine.cinemovieservice.entity.Room;
 import com.cine.cinemovieservice.entity.Seat;
@@ -30,26 +31,32 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public List<Room> fetchAll() {
+    public List<RoomResponseDTO> fetchAll() {
         try {
             log.info("Retrieving all rooms");
-            return roomRepository.findAll();
+            List<Room> rooms = roomRepository.findAll();
+
+            return rooms.stream()
+                    .map(this::mapToDTO)
+                    .toList();
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Error fetching all rooms: {}", e.getMessage());
             return List.of();
         }
     }
 
     @Override
-    public Optional<Room> getDetails(Long id) {
+    public Optional<RoomResponseDTO> getDetails(Long id) {
         try {
             log.info("Retrieving room details with id {}", id);
-            return roomRepository.findById(id);
+            return roomRepository.findById(id)
+                    .map(this::mapToDTO);
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Error fetching room details: {}", e.getMessage());
             return Optional.empty();
         }
     }
+
 
     @Override
     @Transactional
@@ -134,5 +141,17 @@ public class RoomServiceImpl implements RoomService {
         Set<Seat> newSeats = room.generateSeats();
         room.getSeats().addAll(newSeats);
     }
+    public RoomResponseDTO mapToDTO(Room room) {
+        return RoomResponseDTO.builder()
+                .id(room.getId())
+                .roomName(room.getRoomName())
+                .roomRow(room.getRoomRow())
+                .roomColumn(room.getRoomColumn())
+                .seats(room.getSeats().stream().toList())
+                .totalSeats(room.getTotalSeats())
+                .deleted(room.getDeleted())
+                .build();
+    }
+
 
 }
