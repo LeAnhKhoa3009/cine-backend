@@ -61,7 +61,7 @@ public class Room extends BaseEntity {
                         .seatColumn(col)
                         .seatCode(rowChar + String.valueOf(col))
                         .premium(false)
-                        .empty(true)
+                        .empty(false) // <-- Change from true to false
                         .room(this)
                         .build();
                 generatedSeats.add(seat);
