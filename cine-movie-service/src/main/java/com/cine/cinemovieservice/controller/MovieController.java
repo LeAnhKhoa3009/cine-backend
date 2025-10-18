@@ -20,7 +20,6 @@ import java.util.Optional;
 @RequestMapping(value = "api/v1/movies")
 @Tag(name = "Movies")
 @CrossOrigin(origins = "*", maxAge = 3600)
-
 public class MovieController {
 
     private final MovieService movieService;

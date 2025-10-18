@@ -2,12 +2,16 @@ package com.cine.cinemovieservice.validator;
 
 
 import com.cine.cinemovieservice.entity.Movie;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 @Slf4j
+@Component
+@RequiredArgsConstructor
 public class MovieValidator {
 
-    public static void validate(Movie movie) {
+    public void validate(Movie movie) {
         if (movie == null) {
             throw new IllegalArgumentException("Movie must not be null");
         }

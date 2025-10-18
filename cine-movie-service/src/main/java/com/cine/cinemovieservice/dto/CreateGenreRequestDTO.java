@@ -13,8 +13,7 @@ import lombok.NoArgsConstructor;
 public class CreateGenreRequestDTO {
 
     private Long id;
-
-    @NotBlank(message = "Genre name should not be blank")
+    
     private String name;
 
     private String icon;

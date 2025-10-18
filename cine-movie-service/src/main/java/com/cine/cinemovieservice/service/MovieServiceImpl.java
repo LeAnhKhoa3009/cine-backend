@@ -23,11 +23,13 @@ public class MovieServiceImpl implements MovieService{
     private final MovieRepository movieRepository;
     private final GenreService genreService;
     private final GenresRepository genresRepository;
+    private final MovieValidator movieValidator;
 
-    public MovieServiceImpl(MovieRepository movieRepository, GenreService genreService, GenresRepository genresRepository) {
+    public MovieServiceImpl(MovieRepository movieRepository, GenreService genreService, GenresRepository genresRepository, MovieValidator movieValidator) {
         this.movieRepository = movieRepository;
         this.genreService = genreService;
         this.genresRepository = genresRepository;
+        this.movieValidator = movieValidator;
     }
 
     @Override
@@ -53,7 +55,7 @@ public class MovieServiceImpl implements MovieService{
     public Movie save(CreateMovieRequestDTO createMovieRequestDTO) {
         Movie movie = createMovieFromDto(createMovieRequestDTO);
 
-        MovieValidator.validate(movie);
+        movieValidator.validate(movie);
 
         return movieRepository.save(movie);
     }
@@ -65,7 +67,7 @@ public class MovieServiceImpl implements MovieService{
             Movie movie = optionalMovie.get();
             updateMovieFromDto(movie, updateMovieRequestDTO);
 
-            MovieValidator.validate(movie);
+            movieValidator.validate(movie);
 
             return movieRepository.save(movie);
         }
