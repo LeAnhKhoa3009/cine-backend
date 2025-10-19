@@ -152,6 +152,7 @@ public class UserDashboardController {
     }
 
     @PostMapping("/{userId}")
+    @Tag(name = "Restore User")
     public ResponseEntity<ApiResponse<RestoreUserResponseDTO>> restoreUser(@PathVariable Long userId) {
         try {
             RetrieveUserReponseDTO user = userService.findById(userId);

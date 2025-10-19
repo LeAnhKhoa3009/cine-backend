@@ -1,9 +1,6 @@
 package com.cine.cinemovieservice.controller;
 
-import com.cine.cinemovieservice.dto.ApiResponse;
-import com.cine.cinemovieservice.dto.RawImageResponseDTO;
-import com.cine.cinemovieservice.dto.RetrieveImageDTO;
-import com.cine.cinemovieservice.dto.UploadImageReponseDTO;
+import com.cine.cinemovieservice.dto.*;
 import com.cine.cinemovieservice.exception.NotModifiedException;
 import com.cine.cinemovieservice.service.ImageService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -90,6 +87,39 @@ public class ImageController {
         } catch (Exception e) {
             return ResponseEntity.internalServerError()
                     .body(ApiResponse.<Page<RetrieveImageDTO>>builder()
+                            .status(ApiResponse.ApiResponseStatus.ERROR)
+                            .message(e.getMessage())
+                            .build());
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<DeleteImageResponseDTO>> delete(@PathVariable Long id) {
+        try {
+            DeleteImageResponseDTO deleteImageResponseDTO = imageService.delete(id);
+            if(deleteImageResponseDTO == null){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(ApiResponse.<DeleteImageResponseDTO>builder()
+                                .status(ApiResponse.ApiResponseStatus.FAILURE)
+                                .message("Image not found with id " + id)
+                                .build());
+            }
+
+            return ResponseEntity.ok(
+                    ApiResponse.<DeleteImageResponseDTO>builder()
+                            .status(ApiResponse.ApiResponseStatus.SUCCESS)
+                            .data(deleteImageResponseDTO)
+                            .build()
+            );
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(ApiResponse.<DeleteImageResponseDTO>builder()
+                            .status(ApiResponse.ApiResponseStatus.FAILURE)
+                            .message(e.getMessage())
+                            .build());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.<DeleteImageResponseDTO>builder()
                             .status(ApiResponse.ApiResponseStatus.ERROR)
                             .message(e.getMessage())
                             .build());

@@ -1,5 +1,6 @@
 package com.cine.cinemovieservice.service;
 
+import com.cine.cinemovieservice.dto.DeleteImageResponseDTO;
 import com.cine.cinemovieservice.dto.RawImageResponseDTO;
 import com.cine.cinemovieservice.dto.RetrieveImageDTO;
 import com.cine.cinemovieservice.dto.UploadImageReponseDTO;
@@ -11,7 +12,6 @@ import io.micrometer.common.util.StringUtils;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -95,6 +95,19 @@ public class ImageServiceImpl implements ImageService {
                 .size(image.getSize())
                 .contentType(image.getContentType())
                 .build());
+    }
+
+    @Override
+    public DeleteImageResponseDTO delete(Long id) {
+        if(id == null){
+            throw new IllegalArgumentException("Id must not be null");
+        }
+
+        if(imageRepository.findById(id).isEmpty()){
+            return null;
+        }
+        imageRepository.deleteById(id);
+        return new DeleteImageResponseDTO(id);
     }
 
 

@@ -98,7 +98,7 @@ public class GatewayConfiguration {
                                 .filters(jwtFilterSpec::filterForAdmin)
                                 .uri(serviceLocatorConfiguration.getAuthenticationServiceHost()))
                 .route("cine-movie-service", r ->
-                        r.path("/api/v1/movies/**", "/api/v1/genres/**", "/api/v1/rooms/**", "/api/v1/seats/**")
+                        r.path("/api/v1/movies/**", "/api/v1/genres/**", "/api/v1/rooms/**", "/api/v1/seats/**", "/api/v1/images/**")
                                 .and()
                                 .method("POST", "PUT", "GET", "DELETE")
                                 .filters(jwtFilterSpec::filterForAdmin)
