@@ -17,11 +17,11 @@ import java.util.Optional;
 @RequestMapping(value = "api/v1/users")
 @Tag(name = "Users")
 @CrossOrigin(origins = "*", maxAge = 3600)
-public class UserController {
+public class UserDashboardController {
 
     private final UserService userService;
 
-    public UserController(UserService userService) {
+    public UserDashboardController(UserService userService) {
         this.userService = userService;
     }
 

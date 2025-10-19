@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = "api/v1/accounts")
 @Tag(name = "Accounts")
 @CrossOrigin(origins = "*", maxAge = 3600)
-public class RegistrationController {
+public class UserAccountController {
 
     private final UserService userService;
 
-    public RegistrationController(UserService userService) {
+    public UserAccountController(UserService userService) {
         this.userService = userService;
     }
 

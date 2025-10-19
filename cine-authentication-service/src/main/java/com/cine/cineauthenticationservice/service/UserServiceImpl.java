@@ -58,37 +58,36 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("Tier Point is required");
         }
 
-        String newPassword = saveUserRequestDTO.getPassword();
-        boolean newPasswordProvided = !StringUtils.isBlank(newPassword);
-        if (saveUserRequestDTO.getId() != null) { //Update case
-            validateSaveUserRequestDTO(saveUserRequestDTO, newPasswordProvided);
-            Optional<User> optionalUser = userRepository.findById(saveUserRequestDTO.getId());
-            if (!optionalUser.isPresent()) {
-                log.error("User not found with id {}", saveUserRequestDTO.getId());
-                throw new RuntimeException("User not found with id: " + saveUserRequestDTO.getId());
-            }
+        switch (saveUserRequestDTO.getOperation()){
+            case CREATE:
+                validateSaveUserRequestDTO(saveUserRequestDTO, true);
+                userRepository.findByEmail(saveUserRequestDTO.getEmail()).ifPresent(user -> {
+                    log.error("This email has already been used");
+                    throw new RuntimeException("This email has already been used");
+                });
+                User newUser = userRepository.save(createUserFromRequestDto(saveUserRequestDTO, passwordEncoder.encode(saveUserRequestDTO.getPassword())));
+                return Optional.of(newUser).map(this::retrieveUserDtoFromUser).orElse(null);
 
-            User existedUser = optionalUser.get();
-            if (!saveUserRequestDTO.getEmail().equals(existedUser.getEmail())) {
-                log.error("Email cannot be changed");
-                throw new RuntimeException("Email cannot be changed");
-            }
+            case UPDATE:
+                validateSaveUserRequestDTO(saveUserRequestDTO, !StringUtils.isBlank(saveUserRequestDTO.getPassword()));
+                Optional<User> optionalUser = userRepository.findById(saveUserRequestDTO.getId());
+                if (!optionalUser.isPresent()) {
+                    log.error("User not found with id {}", saveUserRequestDTO.getId());
+                    throw new RuntimeException("User not found with id: " + saveUserRequestDTO.getId());
+                }
+                User existedUser = optionalUser.get();
+                if (!saveUserRequestDTO.getEmail().equals(existedUser.getEmail())) {
+                    log.error("Email cannot be changed");
+                    throw new RuntimeException("Email cannot be changed");
+                }
+                String encodedPassword = StringUtils.isBlank(saveUserRequestDTO.getPassword()) ? passwordEncoder.encode(saveUserRequestDTO.getPassword()) : existedUser.getPassword();
+                User updatedUser = userRepository.save(createUserFromRequestDto(saveUserRequestDTO, encodedPassword));
+                return Optional.of(updatedUser).map(this::retrieveUserDtoFromUser).orElse(null);
 
-            if(!newPasswordProvided){
-                newPassword = existedUser.getPassword();
-            }
-        } else {
-            validateSaveUserRequestDTO(saveUserRequestDTO, true);
-            Optional<User> optionalUser = userRepository.findByEmail(saveUserRequestDTO.getEmail());
-            if (optionalUser.isPresent()) { //Create case - verify email not exists
-                log.error("This email has already been used");
-                throw new RuntimeException("This email has already been used");
-            }
-            newPassword = passwordEncoder.encode(newPassword);
+            default:
+                log.error("Unknown user update operation type");
+                throw new RuntimeException("Unknown user update operation type");
         }
-
-        User user = userRepository.save(createUserFromDto(saveUserRequestDTO, newPassword));
-        return Optional.ofNullable(user).map(this::retrieveUserDtoFromUser).orElse(null);
     }
 
     @Override
@@ -151,28 +150,28 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
-    private User createUserFromDto(SaveUserRequestDTO saveUserRequestDTO, String encodedPassword) {
-        String tierCode = String.valueOf(saveUserRequestDTO.getTierCode());
-        if (tierCode == null || tierCode.isEmpty()) {
-            tierCode = MileStoneTierCode.BRONZE.name();
+    private User createUserFromRequestDto(SaveUserRequestDTO saveUserRequestDTO, String encodedPassword) {
+        MileStoneTierCode tierCode = saveUserRequestDTO.getTierCode();
+        if(tierCode == null){
+            log.warn("Tier not found for code '{}', set default to BRONZE", tierCode);
+            tierCode = MileStoneTierCode.BRONZE;
         }
-        MileStoneTier tier = mileStoneTierRepository.findByCode(tierCode).orElse(null);
-        if (tier == null) {
-            log.warn("Tier not found for code '{}', defaulting to BRONZE", tierCode);
-            tier = mileStoneTierRepository.findByCode(MileStoneTierCode.BRONZE.name()).orElse(null);
-        }
+        MileStoneTier tier = mileStoneTierRepository.findByCode(tierCode.name()).orElse(null);
+        Long mileStonePoint = saveUserRequestDTO.getTierPoint() < tier.getRequiredPoints() ? tier.getRequiredPoints() : saveUserRequestDTO.getTierPoint();
+
         return User.builder()
-            .id(saveUserRequestDTO.getId())
-            .name(saveUserRequestDTO.getName())
-            .email(saveUserRequestDTO.getEmail())
-            .password(encodedPassword)
-            .phoneNumber(saveUserRequestDTO.getPhoneNumber())
-            .role(UserRole.USER)
-            .tierPoint(saveUserRequestDTO.getTierPoint())
-            .mileStoneTier(tier)
-            .active(true)
-            .build();
+                .id(saveUserRequestDTO.getId())
+                .name(saveUserRequestDTO.getName())
+                .email(saveUserRequestDTO.getEmail())
+                .password(encodedPassword)
+                .phoneNumber(saveUserRequestDTO.getPhoneNumber())
+                .role(UserRole.USER)
+                .tierPoint(mileStonePoint)
+                .mileStoneTier(tier)
+                .active(true)
+                .build();
     }
+
 
     private RetrieveUserReponseDTO retrieveUserDtoFromUser(User user) {
         return RetrieveUserReponseDTO.builder()

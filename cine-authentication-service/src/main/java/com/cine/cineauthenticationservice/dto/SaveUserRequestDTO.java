@@ -14,6 +14,13 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @SuperBuilder
 public class SaveUserRequestDTO extends RegisterRequestDTO{
+
+    public enum Operation {
+        CREATE,
+        UPDATE
+    }
+
+    private Operation operation;
     private Long id;
     private Long tierPoint;
     private MileStoneTierCode tierCode;
