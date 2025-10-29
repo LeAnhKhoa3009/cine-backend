@@ -165,4 +165,35 @@ public class RoomController {
                             .build());
         }
     }
+    @PutMapping("/{id}/restore")
+    public ResponseEntity<ApiResponse<RoomResponseDTO>> restoreRoom(@PathVariable Long id) {
+        try {
+            Optional<RoomResponseDTO> restoredRoom = roomService.restore(id);
+
+            if (restoredRoom.isEmpty()) {
+                return ResponseEntity
+                        .status(HttpStatus.NOT_FOUND)
+                        .body(ApiResponse.<RoomResponseDTO>builder()
+                                .status(ApiResponse.ApiResponseStatus.FAILURE)
+                                .message("Room not found or not deleted")
+                                .build());
+            }
+
+            return ResponseEntity.ok(
+                    ApiResponse.<RoomResponseDTO>builder()
+                            .status(ApiResponse.ApiResponseStatus.SUCCESS)
+                            .message("Room restored successfully")
+                            .data(restoredRoom.get())
+                            .build()
+            );
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.<RoomResponseDTO>builder()
+                            .status(ApiResponse.ApiResponseStatus.ERROR)
+                            .message("Error restoring room: " + e.getMessage())
+                            .build());
+        }
+    }
+
 }

@@ -20,6 +20,6 @@ public interface RoomService {
 
     void delete(Long id);
 
-
+    Optional<RoomResponseDTO> restore(Long id);
 }
 
