@@ -5,6 +5,7 @@ import com.cine.cinemovieservice.dto.RawImageResponseDTO;
 import com.cine.cinemovieservice.dto.RetrieveImageDTO;
 import com.cine.cinemovieservice.dto.UploadImageReponseDTO;
 import com.cine.cinemovieservice.entity.Image;
+import com.cine.cinemovieservice.entity.Movie;
 import com.cine.cinemovieservice.exception.NotModifiedException;
 import com.cine.cinemovieservice.repository.ImageRepository;
 import com.cine.cinemovieservice.validator.ImageValidator;
@@ -17,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.security.MessageDigest;
 import java.util.HexFormat;
+import java.util.Optional;
 
 @Service
 public class ImageServiceImpl implements ImageService {
@@ -24,10 +26,12 @@ public class ImageServiceImpl implements ImageService {
     private final ImageRepository imageRepository;
     private final ImageValidator imageValidator;
     private static final String IMAGE_URL_SRC = "/api/v1/images/%d/raw";
+    private final MovieService movieService;
 
-    public ImageServiceImpl(ImageRepository imageRepository, ImageValidator imageValidator) {
+    public ImageServiceImpl(ImageRepository imageRepository, ImageValidator imageValidator, MovieService movieService) {
         this.imageRepository = imageRepository;
         this.imageValidator = imageValidator;
+        this.movieService = movieService;
     }
 
     @Override
@@ -94,6 +98,7 @@ public class ImageServiceImpl implements ImageService {
                 .name(image.getName())
                 .size(image.getSize())
                 .contentType(image.getContentType())
+                .folder(Optional.ofNullable(image.getMovie()).map(Movie::getTitle).orElse("root"))
                 .build());
     }
 
