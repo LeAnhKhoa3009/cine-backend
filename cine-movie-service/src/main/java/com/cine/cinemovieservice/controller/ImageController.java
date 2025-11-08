@@ -4,6 +4,7 @@ import com.cine.cinemovieservice.dto.*;
 import com.cine.cinemovieservice.exception.NotModifiedException;
 import com.cine.cinemovieservice.service.ImageService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.ZoneOffset;
 
+@Slf4j
 @RestController
 @RequestMapping("api/v1/images")
 @Tag(name = "Images")
@@ -28,13 +30,12 @@ public class ImageController {
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Transactional
-    public ResponseEntity<ApiResponse<UploadImageReponseDTO>> upload(@RequestPart("file") MultipartFile file, @RequestParam(required = false) String name) {
+    public ResponseEntity<ApiResponse<UploadImageReponseDTO>> upload(@RequestPart("file") MultipartFile file, @RequestParam(required = false) String fileName, @RequestParam(required = false) String folder) {
         try {
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(ApiResponse.<UploadImageReponseDTO>builder()
                             .status(ApiResponse.ApiResponseStatus.SUCCESS)
-                            .data(imageService.upload(file, name))
+                            .data(imageService.upload(file, fileName, folder))
                             .build());
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -62,7 +63,7 @@ public class ImageController {
                     .eTag(rawImageResponseDTO.eTag())
                     .contentType(MediaType.parseMediaType(rawImageResponseDTO.contentType()))
                     .lastModified(rawImageResponseDTO.updatedTime().toInstant(ZoneOffset.UTC))
-                    .cacheControl(CacheControl.maxAge(java.time.Duration.ofDays(30)).cachePublic().immutable())
+                    .cacheControl(CacheControl.maxAge(java.time.Duration.ofSeconds(20)).cachePublic().immutable())
                     .body(rawImageResponseDTO.content());
         } catch (NotModifiedException e) {
             return ResponseEntity.status(HttpStatus.NOT_MODIFIED).eTag(e.getEtag()).build();
@@ -73,25 +74,6 @@ public class ImageController {
         }
     }
 
-    @GetMapping
-    public ResponseEntity<ApiResponse<Page<RetrieveImageDTO>>> fetchAll(@RequestParam(defaultValue = "0") int page,
-                                                                        @RequestParam(defaultValue = "10") int size) {
-        try {
-            Page<RetrieveImageDTO> users = imageService.fetchAll(page, size);
-            return ResponseEntity.ok(
-                    ApiResponse.<Page<RetrieveImageDTO>>builder()
-                            .status(ApiResponse.ApiResponseStatus.SUCCESS)
-                            .data(users)
-                            .build()
-            );
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError()
-                    .body(ApiResponse.<Page<RetrieveImageDTO>>builder()
-                            .status(ApiResponse.ApiResponseStatus.ERROR)
-                            .message(e.getMessage())
-                            .build());
-        }
-    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<DeleteImageResponseDTO>> delete(@PathVariable Long id) {
