@@ -22,4 +22,6 @@ public class ImportMovieDTO {
     private int duration;
 
     private List<Long> genres;
+
+    private String teaser;
 }

@@ -68,6 +68,7 @@ public class DatabaseSeeder implements CommandLineRunner {
                         .duration(movieDTO.getDuration())
                         .deleted(false)
                         .genres(genres)
+                        .teaser(movieDTO.getTeaser())
                         .build();
 
                 movieRepository.save(defaultMovie);

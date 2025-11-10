@@ -36,6 +36,9 @@ import java.util.Set;
     @Column(nullable = false)
     private int duration;
 
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String teaser;
+
     @ManyToMany
     @JoinTable(
             name = "movie_genre",
