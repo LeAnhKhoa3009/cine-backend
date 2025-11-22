@@ -3,8 +3,10 @@ package com.cine.cinemovieservice.seeder;
 import com.cine.cinemovieservice.dto.ImportGenreDTO;
 import com.cine.cinemovieservice.dto.ImportMovieDTO;
 import com.cine.cinemovieservice.entity.Genre;
+import com.cine.cinemovieservice.entity.ImageFolder;
 import com.cine.cinemovieservice.entity.Movie;
 import com.cine.cinemovieservice.repository.GenresRepository;
+import com.cine.cinemovieservice.repository.ImageFolderRepository;
 import com.cine.cinemovieservice.repository.MovieRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -26,11 +28,13 @@ public class DatabaseSeeder implements CommandLineRunner {
 
     private final MovieRepository movieRepository;
     private final GenresRepository genresRepository;
+    private final ImageFolderRepository imageFolderRepository;
     private final ObjectMapper objectMapper;
 
-    public DatabaseSeeder(MovieRepository movieRepository, GenresRepository genresRepository) {
+    public DatabaseSeeder(MovieRepository movieRepository, GenresRepository genresRepository, ImageFolderRepository imageFolderRepository) {
         this.movieRepository = movieRepository;
         this.genresRepository = genresRepository;
+        this.imageFolderRepository = imageFolderRepository;
         objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -43,7 +47,6 @@ public class DatabaseSeeder implements CommandLineRunner {
         for (ImportGenreDTO genreDTO : loadGenres()) {
             if(genresRepository.findById(genreDTO.getId()).isEmpty()){
                 Genre defaultGenre = Genre.builder()
-//                        .id(genreDTO.getId())
                         .name(genreDTO.getName())
                         .icon(genreDTO.getIcon())
                         .deleted(false)
@@ -57,7 +60,6 @@ public class DatabaseSeeder implements CommandLineRunner {
             if(movieRepository.findById(movieDTO.getId()).isEmpty()){
                 Set<Genre> genres = new HashSet<>(genresRepository.findAllById(movieDTO.getGenres()));
                 Movie defaultMovie = Movie.builder()
-//                        .id(movieDTO.getId())
                         .title(movieDTO.getTitle())
                         .description(movieDTO.getDescription())
                         .poster(movieDTO.getPoster())
@@ -66,10 +68,24 @@ public class DatabaseSeeder implements CommandLineRunner {
                         .duration(movieDTO.getDuration())
                         .deleted(false)
                         .genres(genres)
+                        .teaser(movieDTO.getTeaser())
                         .build();
 
                 movieRepository.save(defaultMovie);
             }
+        }
+
+        //Init root folder
+        if(imageFolderRepository.findByName("root").isEmpty()){
+            imageFolderRepository.save(ImageFolder.builder()
+                    .name("root")
+                    .build());
+        }
+
+        if(imageFolderRepository.findByName("test").isEmpty()){
+            imageFolderRepository.save(ImageFolder.builder()
+                    .name("test")
+                    .build());
         }
     }
 

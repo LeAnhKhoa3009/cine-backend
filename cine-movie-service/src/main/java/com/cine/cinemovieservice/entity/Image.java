@@ -34,4 +34,20 @@ public class Image extends BaseEntity {
     @JoinColumn(name = "movie_id", nullable = true)
     @JsonIgnore
     private Movie movie;
+
+    @ManyToOne
+    @JoinColumn(name = "folder_id", nullable = true)
+    @JsonIgnore
+    private ImageFolder folder;
+
+    @Override
+    public String toString() {
+        return "Image{" +
+                "id=" + getId() +
+                ", name='" + name + '\'' +
+                ", size=" + size +
+                ", contentType='" + contentType + '\'' +
+                ", checksumSha256='" + checksumSha256 + '\'' +
+                '}';
+    }
 }

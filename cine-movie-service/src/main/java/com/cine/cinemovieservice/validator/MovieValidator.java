@@ -30,5 +30,9 @@ public class MovieValidator {
             log.error("Movie premiere date should not be null");
             throw new IllegalArgumentException("Movie premiere date should not be null");
         }
+        if (movie.getTeaser() == null || movie.getTeaser().trim().isEmpty()) {
+            log.error("Movie trailer should not be null");
+            throw new IllegalArgumentException("Movie trailer should not be null");
+        }
     }
 }

@@ -136,6 +136,7 @@ public class MovieServiceImpl implements MovieService{
                 .rating(createMovieRequestDTO.getRating())
                 .premiereDate(createMovieRequestDTO.getPremiereDate())
                 .genres(genres)
+                .teaser(createMovieRequestDTO.getTeaser())
                 .build();
     }
 
@@ -149,6 +150,7 @@ public class MovieServiceImpl implements MovieService{
         targetMovie.setGenres(movieDto.getGenres().stream().map(genresRepository::findById).flatMap(Optional::stream).collect(Collectors.toSet())
         );
     }
+  
     private MovieResponseDTO mapToDto(Movie movie) {
         return MovieResponseDTO.builder()
                 .id(movie.getId())

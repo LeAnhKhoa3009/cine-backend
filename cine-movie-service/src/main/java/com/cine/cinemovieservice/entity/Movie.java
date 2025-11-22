@@ -1,5 +1,6 @@
 package com.cine.cinemovieservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -35,6 +36,9 @@ import java.util.Set;
     @Column(nullable = false)
     private int duration;
 
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String teaser;
+
     @ManyToMany
     @JoinTable(
             name = "movie_genre",
@@ -46,6 +50,7 @@ import java.util.Set;
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Session> sessions = new ArrayList<>();
 
-    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Image> image = new ArrayList<>();
+    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<Image> images = new ArrayList<>();
 }

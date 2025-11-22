@@ -4,6 +4,7 @@ import com.cine.cinemovieservice.dto.*;
 import com.cine.cinemovieservice.exception.NotModifiedException;
 import com.cine.cinemovieservice.service.ImageService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.ZoneOffset;
 
+@Slf4j
 @RestController
 @RequestMapping("api/v1/images")
 @Tag(name = "Images")
@@ -35,7 +37,7 @@ public class ImageController {
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(ApiResponse.<UploadImageReponseDTO>builder()
                             .status(ApiResponse.ApiResponseStatus.SUCCESS)
-                            .data(imageService.upload(file, name))
+                            .data(imageService.upload(file, fileName, folder))
                             .build());
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -64,7 +66,7 @@ public class ImageController {
                     .eTag(rawImageResponseDTO.eTag())
                     .contentType(MediaType.parseMediaType(rawImageResponseDTO.contentType()))
                     .lastModified(rawImageResponseDTO.updatedTime().toInstant(ZoneOffset.UTC))
-                    .cacheControl(CacheControl.maxAge(java.time.Duration.ofDays(30)).cachePublic().immutable())
+                    .cacheControl(CacheControl.maxAge(java.time.Duration.ofSeconds(20)).cachePublic().immutable())
                     .body(rawImageResponseDTO.content());
         } catch (NotModifiedException e) {
             return ResponseEntity.status(HttpStatus.NOT_MODIFIED).eTag(e.getEtag()).build();

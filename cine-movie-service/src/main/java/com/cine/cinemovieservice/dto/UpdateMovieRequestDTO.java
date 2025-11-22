@@ -22,4 +22,5 @@ public class UpdateMovieRequestDTO {
     private String description;
     private int duration;
     private Set<Long> genres;
+    private String teaser;
 }
