@@ -15,7 +15,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "api/v1/users")
-@Tag(name = "Users")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class UserDashboardController {
 
@@ -26,7 +25,8 @@ public class UserDashboardController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<Page<User>>> fetchAllUsers(
+    @Tag(name = "Fetch Users")
+    public ResponseEntity<ApiResponse<Page<User>>> fetchAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         try {
@@ -47,10 +47,11 @@ public class UserDashboardController {
         }
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<ApiResponse<RetrieveUserReponseDTO>> getUserById(@PathVariable Long userId) {
+    @GetMapping("/{id}")
+    @Tag(name = "Fetch User by ID")
+    public ResponseEntity<ApiResponse<RetrieveUserReponseDTO>> fetchById(@PathVariable Long id) {
         try {
-            return Optional.ofNullable(userService.findById(userId))
+            return Optional.ofNullable(userService.findById(id))
                     .map(user -> ResponseEntity
                             .ok(ApiResponse.<RetrieveUserReponseDTO>builder()
                                     .status(ApiResponse.ApiResponseStatus.SUCCESS)
@@ -59,7 +60,7 @@ public class UserDashboardController {
                     .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
                             .body(ApiResponse.<RetrieveUserReponseDTO>builder()
                                     .status(ApiResponse.ApiResponseStatus.FAILURE)
-                                    .message("User not found with id " + userId)
+                                    .message("User not found with id " + id)
                                     .build()));
 
         } catch (Exception e) {
@@ -73,7 +74,8 @@ public class UserDashboardController {
     }
 
     @GetMapping("/username/{email}")
-    public ResponseEntity<ApiResponse<RetrieveUserReponseDTO>> getUserByEmail(@PathVariable String email) {
+    @Tag(name = "Fetch User by Email")
+    public ResponseEntity<ApiResponse<RetrieveUserReponseDTO>> fetchByEmail(@PathVariable String email) {
         try {
             return Optional.ofNullable(userService.findByEmail(email))
                     .map(user -> ResponseEntity
@@ -98,7 +100,8 @@ public class UserDashboardController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<RetrieveUserReponseDTO>> saveUser(
+    @Tag(name = "Save User")
+    public ResponseEntity<ApiResponse<RetrieveUserReponseDTO>> save(
             @Valid @RequestBody SaveUserRequestDTO request) {
         try {
             RetrieveUserReponseDTO savedUser = userService.saveUser(request);
@@ -124,15 +127,16 @@ public class UserDashboardController {
 
 
 
-    @DeleteMapping("/{userId}")
-    public ResponseEntity<ApiResponse<DeactiveUserResponseDTO>> deactivateUser(@PathVariable Long userId) {
+    @DeleteMapping("/{id}")
+    @Tag(name = "Deactivate User")
+    public ResponseEntity<ApiResponse<DeactiveUserResponseDTO>> deactivate(@PathVariable Long id) {
         try {
-            RetrieveUserReponseDTO user = userService.findById(userId);
+            RetrieveUserReponseDTO user = userService.findById(id);
             if (user == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(ApiResponse.<DeactiveUserResponseDTO>builder()
                                 .status(ApiResponse.ApiResponseStatus.FAILURE)
-                                .message("User not found with id " + userId)
+                                .message("User not found with id " + id)
                                 .build());
             }
             DeactiveUserResponseDTO deactivatedUser = userService.deactiveUser(user.getEmail());
@@ -151,16 +155,16 @@ public class UserDashboardController {
         }
     }
 
-    @PostMapping("/{userId}")
+    @PostMapping("/{id}")
     @Tag(name = "Restore User")
-    public ResponseEntity<ApiResponse<RestoreUserResponseDTO>> restoreUser(@PathVariable Long userId) {
+    public ResponseEntity<ApiResponse<RestoreUserResponseDTO>> restore(@PathVariable Long id) {
         try {
-            RetrieveUserReponseDTO user = userService.findById(userId);
+            RetrieveUserReponseDTO user = userService.findById(id);
             if (user == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(ApiResponse.<RestoreUserResponseDTO>builder()
                                 .status(ApiResponse.ApiResponseStatus.FAILURE)
-                                .message("User not found with id " + userId)
+                                .message("User not found with id " + id)
                                 .build());
             }
             RestoreUserResponseDTO restoredUser = userService.restoreUser(user.getEmail());

@@ -12,7 +12,7 @@ public interface GenreService {
 
     List<Genre> fetchAll();
 
-    Optional<Genre> getDetails(Long id);
+    Optional<Genre> fetchById(Long id);
 
     Genre save(CreateGenreRequestDTO createGenreRequestDTO);
 

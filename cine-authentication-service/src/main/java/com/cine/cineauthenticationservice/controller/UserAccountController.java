@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "api/v1/accounts")
-@Tag(name = "Accounts")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class UserAccountController {
 
@@ -22,6 +21,7 @@ public class UserAccountController {
 
 
     @PostMapping("/register")
+    @Tag(name = "Register User")
     public ResponseEntity<ApiResponse<RegisterResponseDTO>> registerUser(
             @Valid @RequestBody RegisterRequestDTO request) {
         try {
@@ -47,6 +47,7 @@ public class UserAccountController {
     }
 
     @PostMapping("/update")
+    @Tag(name = "Update User Profile")
     public ResponseEntity<ApiResponse<RetrieveUserReponseDTO>> updateUser(@RequestBody ProfileUpdateRequestDTO request) {
         try {
             RetrieveUserReponseDTO retrieveUserDTO = userService.findByEmail(request.getEmail());

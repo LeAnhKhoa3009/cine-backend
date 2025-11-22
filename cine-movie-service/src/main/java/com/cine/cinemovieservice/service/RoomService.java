@@ -12,7 +12,7 @@ public interface RoomService {
 
     List<RoomResponseDTO> fetchAll();
 
-    Optional<RoomResponseDTO> getDetails(Long id);
+    Optional<RoomResponseDTO> fetchById(Long id);
 
     Room save(CreateRoomRequestDTO createRoomRequestDTO);
 
@@ -20,6 +20,6 @@ public interface RoomService {
 
     void delete(Long id);
 
-
+    Optional<RoomResponseDTO> restore(Long id);
 }
 

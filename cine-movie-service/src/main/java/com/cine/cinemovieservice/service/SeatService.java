@@ -8,9 +8,9 @@ import java.util.Optional;
 
 public interface SeatService {
 
-    List<Seat> fetchAllWithRoomId(Long roomId);
+    List<Seat> fetchAllByRoomId(Long roomId);
 
-    Optional<Seat> getDetails(Long roomId, Long seatId);
+    Optional<Seat> fetchBySeatIdAndRoomId(Long roomId, Long seatId);
 
     Seat update(UpdateSeatRequestDTO updateSeatRequestDTO);
 
