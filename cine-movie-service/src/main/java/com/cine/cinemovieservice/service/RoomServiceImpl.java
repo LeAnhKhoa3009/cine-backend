@@ -46,7 +46,7 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public Optional<RoomResponseDTO> getDetails(Long id) {
+    public Optional<RoomResponseDTO> fetchById(Long id) {
         try {
             log.info("Retrieving room details with id {}", id);
             return roomRepository.findById(id)
@@ -113,6 +113,31 @@ public class RoomServiceImpl implements RoomService {
         }
     }
 
+    @Override
+    public Optional<RoomResponseDTO> restore(Long id) {
+        try {
+            Optional<Room> optionalRoom = roomRepository.findById(id);
+            if (optionalRoom.isEmpty()) {
+                log.error("Room not found with id {}", id);
+                return null;
+            }
+            Room room = optionalRoom.get();
+            if (!room.getDeleted()) {
+                log.warn("Room with id {} is not deleted, no need to restore", id);
+                return null;
+            }
+            regenerateSeats(room);
+            room.setDeleted(false);
+            roomRepository.save(room);
+            log.info("Restored room {} and regenerated its seats successfully", id);
+            return Optional.ofNullable(mapToDTO(room));
+        } catch (Exception e) {
+            log.error("Error restoring room with id {}: {}", id, e.getMessage());
+            return null;
+        }
+    }
+
+
     private Room createRoomFromDTO(CreateRoomRequestDTO createRoomRequestDTO) {
         return Room.builder()
                 .roomName(createRoomRequestDTO.getRoomName())
@@ -141,7 +166,7 @@ public class RoomServiceImpl implements RoomService {
         Set<Seat> newSeats = room.generateSeats();
         room.getSeats().addAll(newSeats);
     }
-    public RoomResponseDTO mapToDTO(Room room) {
+    private RoomResponseDTO mapToDTO(Room room) {
         return RoomResponseDTO.builder()
                 .id(room.getId())
                 .roomName(room.getRoomName())
@@ -152,6 +177,4 @@ public class RoomServiceImpl implements RoomService {
                 .deleted(room.getDeleted())
                 .build();
     }
-
-
 }

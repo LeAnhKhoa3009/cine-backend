@@ -1,21 +1,25 @@
 package com.cine.cinemovieservice.service;
 
 import com.cine.cinemovieservice.dto.CreateMovieRequestDTO;
+import com.cine.cinemovieservice.dto.MovieResponseDTO;
 import com.cine.cinemovieservice.dto.UpdateMovieRequestDTO;
 import com.cine.cinemovieservice.entity.Movie;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface MovieService {
 
-    List<Movie> getAllMovies();
+    Page<MovieResponseDTO> fetchAll(Pageable pageable);
 
-    Optional<Movie> getDetails(Long id);
+    Optional<MovieResponseDTO> fetchById(Long id);
 
     Movie save(CreateMovieRequestDTO createMovieRequestDTO);
 
     Movie update(UpdateMovieRequestDTO updateMovieRequestDTO);
 
     void delete(Long id);
+
+    Optional<MovieResponseDTO> restore(Long id);
 }

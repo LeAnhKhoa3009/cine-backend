@@ -19,7 +19,7 @@ public class SeatServiceImpl implements SeatService {
 
 
     @Override
-    public List<Seat> fetchAllWithRoomId(Long roomId) {
+    public List<Seat> fetchAllByRoomId(Long roomId) {
         try {
             log.info("Retrieving all seats with room id {}", roomId);
             return seatRepository.findByRoomId(roomId);
@@ -30,7 +30,7 @@ public class SeatServiceImpl implements SeatService {
     }
 
     @Override
-    public Optional<Seat> getDetails(Long roomId, Long seatId) {
+    public Optional<Seat> fetchBySeatIdAndRoomId(Long roomId, Long seatId) {
         try {
             log.info("Retrieving seat with id {} of room id {}", seatId, roomId);
             return seatRepository.findByIdAndRoomId(seatId, roomId);

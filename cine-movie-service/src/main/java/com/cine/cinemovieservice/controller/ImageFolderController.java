@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/v1/folders")
-@Tag(name = "Image Folders")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class ImageFolderController {
     private final ImageFolderService imageFolderService;
@@ -22,6 +21,7 @@ public class ImageFolderController {
 
     @GetMapping
     @Transactional
+    @Tag(name = "Fetch Image Folders")
     public ResponseEntity<ApiResponse<Page<RetrieveImageFolderDTO>>> fetchAll(@RequestParam(defaultValue = "0") int page,
                                                                         @RequestParam(defaultValue = "10") int size) {
         try {
@@ -43,6 +43,7 @@ public class ImageFolderController {
 
 
     @PostMapping
+    @Tag(name = "Create Image Folder")
     public ResponseEntity<ApiResponse<RetrieveImageFolderDTO>> create(@RequestBody SaveImageFolderRequestDTO request) {
         try {
             RetrieveImageFolderDTO folderDTO = imageFolderService.create(request.name());
@@ -67,6 +68,7 @@ public class ImageFolderController {
     }
 
     @PutMapping("/{id}")
+    @Tag(name = "Update Image Folder")
     public ResponseEntity<ApiResponse<RetrieveImageFolderDTO>> update(@PathVariable Long id, @RequestBody SaveImageFolderRequestDTO request) {
         try {
             RetrieveImageFolderDTO folderDTO = imageFolderService.update(id, request.name());
@@ -90,6 +92,7 @@ public class ImageFolderController {
     }
 
     @DeleteMapping("/{id}")
+    @Tag(name = "Delete Image Folder")
     public ResponseEntity<ApiResponse<DeleteImageFolderResponseDTO>> delete(@PathVariable Long id, @RequestParam(defaultValue = "false", required = false) Boolean deleteItem) {
         try{
             DeleteImageFolderResponseDTO responseDTO = imageFolderService.delete(id, deleteItem);

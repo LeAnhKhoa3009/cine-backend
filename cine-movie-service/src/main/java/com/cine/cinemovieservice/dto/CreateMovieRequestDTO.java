@@ -13,7 +13,6 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 public class CreateMovieRequestDTO {
-
     private Long id;
     private String title;
     private String poster;

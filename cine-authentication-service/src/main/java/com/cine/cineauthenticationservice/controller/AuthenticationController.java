@@ -2,6 +2,7 @@ package com.cine.cineauthenticationservice.controller;
 
 import com.cine.cineauthenticationservice.dto.*;
 import com.cine.cineauthenticationservice.service.AuthenticationService;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
@@ -10,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "api/v1/authenticate")
-@Tag(name = "Authentication")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class AuthenticationController {
 
@@ -21,6 +21,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/token")
+    @Tag(name = "Authenticate User")
     public ResponseEntity<ApiResponse<AuthenticationResponseDTO>> authenticate(@RequestBody AuthenticationRequestDTO authenticationRequestDTO) {
         try {
 
@@ -42,6 +43,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/verify")
+    @Tag(name = "Verify Token validity")
     public ResponseEntity<ApiResponse<VerifyResponseDTO>> verify(@RequestBody VerifyRequestDTO verifyRequestDTO) {
         try{
             return ResponseEntity
@@ -61,6 +63,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/authorize")
+    @Tag(name = "Authorize User")
     public ResponseEntity<ApiResponse<AuthorizeResponseDTO>> verify(@RequestBody AuthorizeRequestDTO authorizeRequestDTO) {
         try{
             return ResponseEntity

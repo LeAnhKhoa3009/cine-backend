@@ -17,7 +17,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/seats")
-@Tag(name = "Seat")
 @CrossOrigin(origins = "*", maxAge = 3600)
 @Slf4j
 public class SeatController {
@@ -28,10 +27,11 @@ public class SeatController {
         this.seatService = seatService;
     }
 
-    @GetMapping("/room/{roomId}")
+    @GetMapping("/rooms/{roomId}")
+    @Tag(name = "Fetch Seats by RoomID")
     public ResponseEntity<ApiResponse<List<Seat>>> getAllSeatsByRoom(@PathVariable @NotNull Long roomId) {
         try {
-            List<Seat> seats = seatService.fetchAllWithRoomId(roomId);
+            List<Seat> seats = seatService.fetchAllByRoomId(roomId);
             return ResponseEntity.ok(
                     ApiResponse.<List<Seat>>builder()
                             .status(ApiResponse.ApiResponseStatus.SUCCESS)
@@ -48,10 +48,11 @@ public class SeatController {
         }
     }
 
-    @GetMapping("/{roomId}/seats/{seatId}")
-    public ResponseEntity<ApiResponse<Seat>> getSeatById(@PathVariable @NotNull Long roomId, @PathVariable @NotNull Long seatId) {
+    @GetMapping("/{seatId}/rooms/{roomId}")
+    @Tag(name = "Fetch Seat by SeatID, RoomID")
+    public ResponseEntity<ApiResponse<Seat>> getSeatById(@PathVariable Long seatId, @PathVariable Long roomId) {
         try {
-            Optional<Seat> seatOpt = seatService.getDetails(roomId, seatId);
+            Optional<Seat> seatOpt = seatService.fetchBySeatIdAndRoomId(roomId, seatId);
             return seatOpt
                     .map(seat -> ResponseEntity.ok(
                             ApiResponse.<Seat>builder()
@@ -74,6 +75,7 @@ public class SeatController {
     }
 
     @PutMapping("/{seatId}")
+    @Tag(name = "Update Seat")
     public ResponseEntity<ApiResponse<Seat>> updateSeat(
             @PathVariable Long seatId,
             @RequestBody @Valid UpdateSeatRequestDTO updateSeatRequestDTO) {
@@ -104,5 +106,4 @@ public class SeatController {
                             .build());
         }
     }
-
 }

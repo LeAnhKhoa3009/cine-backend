@@ -1,16 +1,17 @@
 package com.cine.cinemovieservice.controller;
 
-import com.cine.cinemovieservice.dto.*;
+import com.cine.cinemovieservice.dto.ApiResponse;
+import com.cine.cinemovieservice.dto.DeleteImageResponseDTO;
+import com.cine.cinemovieservice.dto.RawImageResponseDTO;
+import com.cine.cinemovieservice.dto.UploadImageReponseDTO;
 import com.cine.cinemovieservice.exception.NotModifiedException;
 import com.cine.cinemovieservice.service.ImageService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,7 +20,6 @@ import java.time.ZoneOffset;
 @Slf4j
 @RestController
 @RequestMapping("api/v1/images")
-@Tag(name = "Images")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class ImageController {
 
@@ -30,6 +30,7 @@ public class ImageController {
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Tag(name = "Upload Image")
     public ResponseEntity<ApiResponse<UploadImageReponseDTO>> upload(@RequestPart("file") MultipartFile file, @RequestParam(required = false) String fileName, @RequestParam(required = false) String folder) {
         try {
             return ResponseEntity.status(HttpStatus.CREATED)
@@ -53,7 +54,8 @@ public class ImageController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<byte[]> getRawImage(@PathVariable Long id, @RequestHeader(value = "If-None-Match", required = false) String ifNoneMatch) {
+    @Tag(name = "Serve Image")
+    public ResponseEntity<byte[]> serve(@PathVariable Long id, @RequestHeader(value = "If-None-Match", required = false) String ifNoneMatch) {
         try {
             RawImageResponseDTO rawImageResponseDTO = imageService.get(id, ifNoneMatch);
             if(rawImageResponseDTO == null){
@@ -76,6 +78,7 @@ public class ImageController {
 
 
     @DeleteMapping("/{id}")
+    @Tag(name = "Delete Image by ID")
     public ResponseEntity<ApiResponse<DeleteImageResponseDTO>> delete(@PathVariable Long id) {
         try {
             DeleteImageResponseDTO deleteImageResponseDTO = imageService.delete(id);

@@ -18,7 +18,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "api/v1/rooms")
-@Tag(name = "Rooms")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class RoomController {
 
@@ -29,7 +28,8 @@ public class RoomController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<RoomResponseDTO>>> getAllRooms() {
+    @Tag(name = "Fetch Rooms")
+    public ResponseEntity<ApiResponse<List<RoomResponseDTO>>> fetchAll() {
         try {
             return ResponseEntity.ok(
                     ApiResponse.<List<RoomResponseDTO>>builder()
@@ -47,9 +47,10 @@ public class RoomController {
     }
 
     @GetMapping("/{roomId}")
-    public ResponseEntity<ApiResponse<RoomResponseDTO>> getRoomById(@PathVariable @NotNull Long roomId) {
+    @Tag(name = "Fetch Room by ID")
+    public ResponseEntity<ApiResponse<RoomResponseDTO>> fetchById(@PathVariable @NotNull Long roomId) {
         try {
-            return roomService.getDetails(roomId)
+            return roomService.fetchById(roomId)
                     .map(room -> ResponseEntity.ok(
                             ApiResponse.<RoomResponseDTO>builder()
                                     .status(ApiResponse.ApiResponseStatus.SUCCESS)
@@ -72,7 +73,8 @@ public class RoomController {
 
 
     @PostMapping
-    public ResponseEntity<ApiResponse<Room>> createRoom(
+    @Tag(name = "Create Room")
+    public ResponseEntity<ApiResponse<Room>> create(
             @Valid @RequestBody CreateRoomRequestDTO request) {
         try {
             Room savedRoom = roomService.save(request);
@@ -103,9 +105,10 @@ public class RoomController {
     }
 
     @DeleteMapping("/{roomId}")
-    public ResponseEntity<ApiResponse<Room>> deleteRoom(@PathVariable @NotNull Long roomId) {
+    @Tag(name = "Delete Room")
+    public ResponseEntity<ApiResponse<Room>> delete(@PathVariable @NotNull Long roomId) {
         try {
-            Optional<RoomResponseDTO> isActive = roomService.getDetails(roomId);
+            Optional<RoomResponseDTO> isActive = roomService.fetchById(roomId);
             roomService.delete(roomId);
 
             if (isActive.isEmpty()) {
@@ -134,7 +137,8 @@ public class RoomController {
     }
 
     @PutMapping("/{roomId}")
-    public ResponseEntity<ApiResponse<Room>> updateRoom(
+    @Tag(name = "Update Room")
+    public ResponseEntity<ApiResponse<Room>> update(
             @PathVariable Long roomId,
             @RequestBody @Valid UpdateRoomRequestDTO updateRoomRequestDTO) {
         try {
@@ -162,6 +166,37 @@ public class RoomController {
                     .body(ApiResponse.<Room>builder()
                             .status(ApiResponse.ApiResponseStatus.ERROR)
                             .message("Internal error. Please contact administrator.")
+                            .build());
+        }
+    }
+    @PutMapping("/{id}/restore")
+    @Tag(name = "Restore Room")
+    public ResponseEntity<ApiResponse<RoomResponseDTO>> restore(@PathVariable Long id) {
+        try {
+            Optional<RoomResponseDTO> restoredRoom = roomService.restore(id);
+
+            if (restoredRoom.isEmpty()) {
+                return ResponseEntity
+                        .status(HttpStatus.NOT_FOUND)
+                        .body(ApiResponse.<RoomResponseDTO>builder()
+                                .status(ApiResponse.ApiResponseStatus.FAILURE)
+                                .message("Room not found or not deleted")
+                                .build());
+            }
+
+            return ResponseEntity.ok(
+                    ApiResponse.<RoomResponseDTO>builder()
+                            .status(ApiResponse.ApiResponseStatus.SUCCESS)
+                            .message("Room restored successfully")
+                            .data(restoredRoom.get())
+                            .build()
+            );
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.<RoomResponseDTO>builder()
+                            .status(ApiResponse.ApiResponseStatus.ERROR)
+                            .message("Error restoring room: " + e.getMessage())
                             .build());
         }
     }

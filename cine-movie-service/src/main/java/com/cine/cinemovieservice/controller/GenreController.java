@@ -18,7 +18,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "api/v1/genres")
-@Tag(name = "Genres")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class GenreController {
 
@@ -26,7 +25,8 @@ public class GenreController {
     private GenreService genreService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<Genre>>> getAllGenres() {
+    @Tag(name = "Fetch All Genres")
+    public ResponseEntity<ApiResponse<List<Genre>>> fetchAll() {
         try {
             return ResponseEntity.ok(
                     ApiResponse.<List<Genre>>builder()
@@ -43,10 +43,11 @@ public class GenreController {
         }
     }
 
-    @GetMapping("/{genreId}")
-    public ResponseEntity<ApiResponse<Genre>> getGenreById(@PathVariable @NotNull Long genreId) {
+    @GetMapping("/{id}")
+    @Tag(name = "Fetch Genre by ID")
+    public ResponseEntity<ApiResponse<Genre>> fetchById(@PathVariable @NotNull Long id) {
         try {
-            return genreService.getDetails(genreId)
+            return genreService.fetchById(id)
                     .map(genre -> ResponseEntity.ok(
                             ApiResponse.<Genre>builder()
                                     .status(ApiResponse.ApiResponseStatus.SUCCESS)
@@ -55,7 +56,7 @@ public class GenreController {
                     .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
                             .body(ApiResponse.<Genre>builder()
                                     .status(ApiResponse.ApiResponseStatus.FAILURE)
-                                    .message("Genre not found with id " + genreId)
+                                    .message("Genre not found with id " + id)
                                     .build()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -67,7 +68,8 @@ public class GenreController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<Genre>> createGenre(
+    @Tag(name = "Create Genre")
+    public ResponseEntity<ApiResponse<Genre>> create(
             @Valid @RequestBody CreateGenreRequestDTO request) {
         try {
             Genre savedGenre = genreService.save(request);
@@ -92,19 +94,20 @@ public class GenreController {
         }
     }
 
-    @PutMapping("/{genreId}")
-    public ResponseEntity<ApiResponse<Genre>> updateGenre(
-            @PathVariable Long genreId,
+    @PutMapping("/{id}")
+    @Tag(name = "Update Genre")
+    public ResponseEntity<ApiResponse<Genre>> update(
+            @PathVariable Long id,
             @RequestBody @Valid UpdateGenreRequestDTO updateGenreRequestDTO) {
         try {
-            updateGenreRequestDTO.setId(genreId);
+            updateGenreRequestDTO.setId(id);
             Genre updatedGenre = genreService.update(updateGenreRequestDTO);
 
             if (updatedGenre == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(ApiResponse.<Genre>builder()
                                 .status(ApiResponse.ApiResponseStatus.FAILURE)
-                                .message("Genre not found with id " + genreId)
+                                .message("Genre not found with id " + id)
                                 .build());
             }
 
@@ -124,17 +127,18 @@ public class GenreController {
         }
     }
 
-    @DeleteMapping("/{genreId}")
-    public ResponseEntity<ApiResponse<Genre>> deleteGenre(@PathVariable @NotNull Long genreId) {
+    @DeleteMapping("/{id}")
+    @Tag(name = "Delete Genre by ID")
+    public ResponseEntity<ApiResponse<Genre>> delete(@PathVariable @NotNull Long id) {
         try {
-            Optional<Genre> isActive = genreService.getDetails(genreId);
-            genreService.delete(genreId);
+            Optional<Genre> isActive = genreService.fetchById(id);
+            genreService.delete(id);
 
             if (isActive.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(ApiResponse.<Genre>builder()
                                 .status(ApiResponse.ApiResponseStatus.FAILURE)
-                                .message("Genre not found with id " + genreId)
+                                .message("Genre not found with id " + id)
                                 .build());
             }
 
