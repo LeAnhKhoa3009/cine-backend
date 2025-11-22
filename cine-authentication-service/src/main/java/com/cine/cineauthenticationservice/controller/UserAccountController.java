@@ -22,6 +22,7 @@ public class UserAccountController {
 
 
     @PostMapping("/register")
+    @Tag(name = "Register a new user")
     public ResponseEntity<ApiResponse<RegisterResponseDTO>> registerUser(
             @Valid @RequestBody RegisterRequestDTO request) {
         try {
@@ -47,6 +48,7 @@ public class UserAccountController {
     }
 
     @PostMapping("/update")
+    @Tag(name = "Update user profile")
     public ResponseEntity<ApiResponse<RetrieveUserReponseDTO>> updateUser(@RequestBody ProfileUpdateRequestDTO request) {
         try {
             RetrieveUserReponseDTO retrieveUserDTO = userService.findByEmail(request.getEmail());

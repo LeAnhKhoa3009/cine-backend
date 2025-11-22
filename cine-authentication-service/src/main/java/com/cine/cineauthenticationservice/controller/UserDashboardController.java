@@ -26,6 +26,7 @@ public class UserDashboardController {
     }
 
     @GetMapping
+    @Tag(name = "Retrieve all users with pagination")
     public ResponseEntity<ApiResponse<Page<User>>> fetchAllUsers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
@@ -48,6 +49,7 @@ public class UserDashboardController {
     }
 
     @GetMapping("/{userId}")
+    @Tag(name = "Retrieve user by id")
     public ResponseEntity<ApiResponse<RetrieveUserReponseDTO>> getUserById(@PathVariable Long userId) {
         try {
             return Optional.ofNullable(userService.findById(userId))
@@ -73,6 +75,7 @@ public class UserDashboardController {
     }
 
     @GetMapping("/username/{email}")
+    @Tag(name = "Retrieve user by email")
     public ResponseEntity<ApiResponse<RetrieveUserReponseDTO>> getUserByEmail(@PathVariable String email) {
         try {
             return Optional.ofNullable(userService.findByEmail(email))
@@ -98,6 +101,7 @@ public class UserDashboardController {
     }
 
     @PostMapping
+    @Tag(name = "Save user in dashboard")
     public ResponseEntity<ApiResponse<RetrieveUserReponseDTO>> saveUser(
             @Valid @RequestBody SaveUserRequestDTO request) {
         try {
@@ -125,6 +129,7 @@ public class UserDashboardController {
 
 
     @DeleteMapping("/{userId}")
+    @Tag(name = "Deactivate user")
     public ResponseEntity<ApiResponse<DeactiveUserResponseDTO>> deactivateUser(@PathVariable Long userId) {
         try {
             RetrieveUserReponseDTO user = userService.findById(userId);
@@ -152,7 +157,7 @@ public class UserDashboardController {
     }
 
     @PostMapping("/{userId}")
-    @Tag(name = "Restore User")
+    @Tag(name = "Restore user")
     public ResponseEntity<ApiResponse<RestoreUserResponseDTO>> restoreUser(@PathVariable Long userId) {
         try {
             RetrieveUserReponseDTO user = userService.findById(userId);

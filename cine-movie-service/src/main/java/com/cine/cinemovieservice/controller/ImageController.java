@@ -29,6 +29,7 @@ public class ImageController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Transactional
+    @Tag(name = "Upload an image")
     public ResponseEntity<ApiResponse<UploadImageReponseDTO>> upload(@RequestPart("file") MultipartFile file, @RequestParam(required = false) String name) {
         try {
             return ResponseEntity.status(HttpStatus.CREATED)
@@ -52,7 +53,8 @@ public class ImageController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<byte[]> getRawImage(@PathVariable Long id, @RequestHeader(value = "If-None-Match", required = false) String ifNoneMatch) {
+    @Tag(name = "Serve image by id with caching")
+    public ResponseEntity<byte[]> serve(@PathVariable Long id, @RequestHeader(value = "If-None-Match", required = false) String ifNoneMatch) {
         try {
             RawImageResponseDTO rawImageResponseDTO = imageService.get(id, ifNoneMatch);
             if(rawImageResponseDTO == null){
@@ -74,6 +76,7 @@ public class ImageController {
     }
 
     @GetMapping
+    @Tag(name = "Fetch all image summaries with pagination")
     public ResponseEntity<ApiResponse<Page<RetrieveImageDTO>>> fetchAll(@RequestParam(defaultValue = "0") int page,
                                                                         @RequestParam(defaultValue = "10") int size) {
         try {
@@ -94,6 +97,7 @@ public class ImageController {
     }
 
     @DeleteMapping("/{id}")
+    @Tag(name = "Delete image")
     public ResponseEntity<ApiResponse<DeleteImageResponseDTO>> delete(@PathVariable Long id) {
         try {
             DeleteImageResponseDTO deleteImageResponseDTO = imageService.delete(id);

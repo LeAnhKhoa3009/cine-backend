@@ -1,9 +1,6 @@
 package com.cine.cinemovieservice.controller;
 
-import com.cine.cinemovieservice.dto.ApiResponse;
-import com.cine.cinemovieservice.dto.CreateMovieRequestDTO;
-import com.cine.cinemovieservice.dto.MovieResponseDTO;
-import com.cine.cinemovieservice.dto.UpdateMovieRequestDTO;
+import com.cine.cinemovieservice.dto.*;
 import com.cine.cinemovieservice.entity.Movie;
 import com.cine.cinemovieservice.service.MovieService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -31,7 +28,8 @@ public class MovieController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<Page<MovieResponseDTO>>> getAllMovies(
+    @Tag(name = "Restore all movies")
+    public ResponseEntity<ApiResponse<Page<MovieResponseDTO>>> fetchAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         try {
@@ -54,7 +52,8 @@ public class MovieController {
     }
 
     @GetMapping("/{movieId}")
-    public ResponseEntity<ApiResponse<MovieResponseDTO>> getMovieById(@PathVariable @NotNull Long movieId) {
+    @Tag(name = "Retrieve movie by id")
+    public ResponseEntity<ApiResponse<MovieResponseDTO>> fetchById(@PathVariable @NotNull Long movieId) {
         try {
             return movieService.getDetails(movieId)
                     .map(movie -> ResponseEntity
@@ -79,7 +78,8 @@ public class MovieController {
 
 
     @PostMapping
-    public ResponseEntity<ApiResponse<Movie>> createMovie(
+    @Tag(name = "Create a movie")
+    public ResponseEntity<ApiResponse<Movie>> create(
             @Valid @RequestBody CreateMovieRequestDTO request) {
         try {
             Movie savedMovie = movieService.save(request);
@@ -110,7 +110,8 @@ public class MovieController {
     }
 
     @DeleteMapping("/{movieId}")
-    public ResponseEntity<ApiResponse<MovieResponseDTO>> deleteMovie(@PathVariable @NotNull Long movieId) {
+    @Tag(name = "Delete movie by id")
+    public ResponseEntity<ApiResponse<MovieResponseDTO>> delete(@PathVariable @NotNull Long movieId) {
         try {
             Optional<MovieResponseDTO> existingMovie = movieService.getDetails(movieId);
             if (existingMovie.isEmpty()) {
@@ -142,7 +143,8 @@ public class MovieController {
 
 
     @PutMapping("/{movieId}")
-    public ResponseEntity<ApiResponse<Movie>> updateMovie(
+    @Tag(name = "Update movie details")
+    public ResponseEntity<ApiResponse<Movie>> update(
             @PathVariable Long movieId,
             @RequestBody @Valid UpdateMovieRequestDTO updateMovieRequestDTO) {
         try {
@@ -175,28 +177,29 @@ public class MovieController {
         }
     }
 
-    @PutMapping("/restore/{movieId}")
-    public ResponseEntity<ApiResponse<MovieResponseDTO>> restoreMovie(@PathVariable @NotNull Long movieId) {
+    @PutMapping("/{movieId}/restore")
+    @Tag(name = "Restore movie by id")
+    public ResponseEntity<ApiResponse<RestoreMovieResponseDTO>> restore(@PathVariable @NotNull Long movieId) {
         try {
             Optional<MovieResponseDTO> restoredMovie = movieService.restore(movieId);
             if (restoredMovie.isEmpty()) {
                 return ResponseEntity
                         .status(HttpStatus.NOT_FOUND)
-                        .body(ApiResponse.<MovieResponseDTO>builder()
+                        .body(ApiResponse.<RestoreMovieResponseDTO>builder()
                                 .status(ApiResponse.ApiResponseStatus.FAILURE)
                                 .message("Movie not found or not deleted with id " + movieId)
                                 .build());
             }
             return ResponseEntity
-                    .ok(ApiResponse.<MovieResponseDTO>builder()
+                    .ok(ApiResponse.<RestoreMovieResponseDTO>builder()
                             .status(ApiResponse.ApiResponseStatus.SUCCESS)
-                            .data(restoredMovie.get())
+                            .data(RestoreMovieResponseDTO.builder().id(restoredMovie.get().getId()).build())
                             .message("Movie restored successfully")
                             .build());
         } catch (Exception e) {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.<MovieResponseDTO>builder()
+                    .body(ApiResponse.<RestoreMovieResponseDTO>builder()
                             .status(ApiResponse.ApiResponseStatus.ERROR)
                             .message("Internal error. Please contact administrator.")
                             .build());

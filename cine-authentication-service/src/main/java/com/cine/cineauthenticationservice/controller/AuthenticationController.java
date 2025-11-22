@@ -21,6 +21,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/token")
+    @Tag(name = "Authenticate user and generate token")
     public ResponseEntity<ApiResponse<AuthenticationResponseDTO>> authenticate(@RequestBody AuthenticationRequestDTO authenticationRequestDTO) {
         try {
 
@@ -42,6 +43,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/verify")
+    @Tag(name = "Verify token validity")
     public ResponseEntity<ApiResponse<VerifyResponseDTO>> verify(@RequestBody VerifyRequestDTO verifyRequestDTO) {
         try{
             return ResponseEntity
@@ -61,6 +63,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/authorize")
+    @Tag(name = "Authorize user for specific role")
     public ResponseEntity<ApiResponse<AuthorizeResponseDTO>> verify(@RequestBody AuthorizeRequestDTO authorizeRequestDTO) {
         try{
             return ResponseEntity

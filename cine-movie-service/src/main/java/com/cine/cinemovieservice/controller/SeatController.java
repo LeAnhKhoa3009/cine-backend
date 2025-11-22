@@ -28,8 +28,9 @@ public class SeatController {
         this.seatService = seatService;
     }
 
-    @GetMapping("/room/{roomId}")
-    public ResponseEntity<ApiResponse<List<Seat>>> getAllSeatsByRoom(@PathVariable @NotNull Long roomId) {
+    @GetMapping("/rooms/{roomId}")
+    @Tag(name = "Fetch all seats of a room by room id")
+    public ResponseEntity<ApiResponse<List<Seat>>> fetchAll(@PathVariable @NotNull Long roomId) {
         try {
             List<Seat> seats = seatService.fetchAllWithRoomId(roomId);
             return ResponseEntity.ok(
@@ -48,8 +49,9 @@ public class SeatController {
         }
     }
 
-    @GetMapping("/{roomId}/seats/{seatId}")
-    public ResponseEntity<ApiResponse<Seat>> getSeatById(@PathVariable @NotNull Long roomId, @PathVariable @NotNull Long seatId) {
+    @GetMapping("/{seatId}/rooms/{roomId}")
+    @Tag(name = "Get seat details by seat id and room id")
+    public ResponseEntity<ApiResponse<Seat>> fetchById(@PathVariable @NotNull Long roomId, @PathVariable @NotNull Long seatId) {
         try {
             Optional<Seat> seatOpt = seatService.getDetails(roomId, seatId);
             return seatOpt
@@ -74,7 +76,8 @@ public class SeatController {
     }
 
     @PutMapping("/{seatId}")
-    public ResponseEntity<ApiResponse<Seat>> updateSeat(
+    @Tag(name = "Update seat details by seat id")
+    public ResponseEntity<ApiResponse<Seat>> update(
             @PathVariable Long seatId,
             @RequestBody @Valid UpdateSeatRequestDTO updateSeatRequestDTO) {
         try {
@@ -104,5 +107,4 @@ public class SeatController {
                             .build());
         }
     }
-
 }

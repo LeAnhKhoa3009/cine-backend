@@ -1,9 +1,6 @@
 package com.cine.cinemovieservice.controller;
 
-import com.cine.cinemovieservice.dto.ApiResponse;
-import com.cine.cinemovieservice.dto.CreateRoomRequestDTO;
-import com.cine.cinemovieservice.dto.RoomResponseDTO;
-import com.cine.cinemovieservice.dto.UpdateRoomRequestDTO;
+import com.cine.cinemovieservice.dto.*;
 import com.cine.cinemovieservice.entity.Room;
 import com.cine.cinemovieservice.service.RoomService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -29,7 +26,8 @@ public class RoomController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<RoomResponseDTO>>> getAllRooms() {
+    @Tag(name = "Fetch all rooms")
+    public ResponseEntity<ApiResponse<List<RoomResponseDTO>>> fetchAll() {
         try {
             return ResponseEntity.ok(
                     ApiResponse.<List<RoomResponseDTO>>builder()
@@ -46,10 +44,11 @@ public class RoomController {
         }
     }
 
-    @GetMapping("/{roomId}")
-    public ResponseEntity<ApiResponse<RoomResponseDTO>> getRoomById(@PathVariable @NotNull Long roomId) {
+    @GetMapping("/{id}")
+    @Tag(name = "Retrieve room by room id")
+    public ResponseEntity<ApiResponse<RoomResponseDTO>> fetchById(@PathVariable @NotNull Long id) {
         try {
-            return roomService.getDetails(roomId)
+            return roomService.getDetails(id)
                     .map(room -> ResponseEntity.ok(
                             ApiResponse.<RoomResponseDTO>builder()
                                     .status(ApiResponse.ApiResponseStatus.SUCCESS)
@@ -59,7 +58,7 @@ public class RoomController {
                     .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
                             .body(ApiResponse.<RoomResponseDTO>builder()
                                     .status(ApiResponse.ApiResponseStatus.FAILURE)
-                                    .message("Room not found with id " + roomId)
+                                    .message("Room not found with id " + id)
                                     .build()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -72,7 +71,8 @@ public class RoomController {
 
 
     @PostMapping
-    public ResponseEntity<ApiResponse<Room>> createRoom(
+    @Tag(name = "Create a room")
+    public ResponseEntity<ApiResponse<Room>> create(
             @Valid @RequestBody CreateRoomRequestDTO request) {
         try {
             Room savedRoom = roomService.save(request);
@@ -102,18 +102,19 @@ public class RoomController {
         }
     }
 
-    @DeleteMapping("/{roomId}")
-    public ResponseEntity<ApiResponse<Room>> deleteRoom(@PathVariable @NotNull Long roomId) {
+    @DeleteMapping("/{id}")
+    @Tag(name = "Delete a room by room id")
+    public ResponseEntity<ApiResponse<Room>> delete(@PathVariable @NotNull Long id) {
         try {
-            Optional<RoomResponseDTO> isActive = roomService.getDetails(roomId);
-            roomService.delete(roomId);
+            Optional<RoomResponseDTO> isActive = roomService.getDetails(id);
+            roomService.delete(id);
 
             if (isActive.isEmpty()) {
                 return ResponseEntity
                         .status(HttpStatus.NOT_FOUND)
                         .body(ApiResponse.<Room>builder()
                                 .status(ApiResponse.ApiResponseStatus.FAILURE)
-                                .message("Room not found with id " + roomId)
+                                .message("Room not found with id " + id)
                                 .build());
             }
 
@@ -134,7 +135,8 @@ public class RoomController {
     }
 
     @PutMapping("/{roomId}")
-    public ResponseEntity<ApiResponse<Room>> updateRoom(
+    @Tag(name = "Update room details")
+    public ResponseEntity<ApiResponse<Room>> update(
             @PathVariable Long roomId,
             @RequestBody @Valid UpdateRoomRequestDTO updateRoomRequestDTO) {
         try {
@@ -166,30 +168,31 @@ public class RoomController {
         }
     }
     @PutMapping("/{id}/restore")
-    public ResponseEntity<ApiResponse<RoomResponseDTO>> restoreRoom(@PathVariable Long id) {
+    @Tag(name = "Restore room by id")
+    public ResponseEntity<ApiResponse<RestoreRoomResponseDTO>> restore(@PathVariable Long id) {
         try {
             Optional<RoomResponseDTO> restoredRoom = roomService.restore(id);
 
             if (restoredRoom.isEmpty()) {
                 return ResponseEntity
                         .status(HttpStatus.NOT_FOUND)
-                        .body(ApiResponse.<RoomResponseDTO>builder()
+                        .body(ApiResponse.<RestoreRoomResponseDTO>builder()
                                 .status(ApiResponse.ApiResponseStatus.FAILURE)
                                 .message("Room not found or not deleted")
                                 .build());
             }
 
             return ResponseEntity.ok(
-                    ApiResponse.<RoomResponseDTO>builder()
+                    ApiResponse.<RestoreRoomResponseDTO>builder()
                             .status(ApiResponse.ApiResponseStatus.SUCCESS)
                             .message("Room restored successfully")
-                            .data(restoredRoom.get())
+                            .data(RestoreRoomResponseDTO.builder().id(restoredRoom.get().getId()).build())
                             .build()
             );
         } catch (Exception e) {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.<RoomResponseDTO>builder()
+                    .body(ApiResponse.<RestoreRoomResponseDTO>builder()
                             .status(ApiResponse.ApiResponseStatus.ERROR)
                             .message("Error restoring room: " + e.getMessage())
                             .build());
