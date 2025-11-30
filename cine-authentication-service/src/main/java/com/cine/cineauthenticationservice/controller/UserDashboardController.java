@@ -73,31 +73,6 @@ public class UserDashboardController {
         }
     }
 
-    @GetMapping("/username/{email}")
-    @Tag(name = "Fetch User by Email")
-    public ResponseEntity<ApiResponse<RetrieveUserReponseDTO>> fetchByEmail(@PathVariable String email) {
-        try {
-            return Optional.ofNullable(userService.findByEmail(email))
-                    .map(user -> ResponseEntity
-                            .ok(ApiResponse.<RetrieveUserReponseDTO>builder()
-                                    .status(ApiResponse.ApiResponseStatus.SUCCESS)
-                                    .data(user)
-                                    .build()))
-                    .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
-                            .body(ApiResponse.<RetrieveUserReponseDTO>builder()
-                                    .status(ApiResponse.ApiResponseStatus.FAILURE)
-                                    .message("User not found with email " + email)
-                                    .build()));
-
-        } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.<RetrieveUserReponseDTO>builder()
-                            .status(ApiResponse.ApiResponseStatus.ERROR)
-                            .message(e.getMessage())
-                            .build());
-        }
-    }
 
     @PostMapping
     @Tag(name = "Save User")

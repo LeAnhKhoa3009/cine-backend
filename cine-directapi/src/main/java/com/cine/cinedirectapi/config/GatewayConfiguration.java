@@ -86,9 +86,9 @@ public class GatewayConfiguration {
                                 .method("POST")
                                 .uri(serviceLocatorConfiguration.getAuthenticationServiceHost()))
                 .route("cine-authentication-service", r ->
-                        r.path("/api/v1/accounts/update")
+                        r.path("/api/v1/accounts/update","/api/v1/accounts/details/**")
                                 .and()
-                                .method("POST")
+                                .method("POST", "GET")
                                 .filters(jwtFilterSpec::filterForUser)
                                 .uri(serviceLocatorConfiguration.getAuthenticationServiceHost()))
                 .route("cine-authentication-service", r ->
