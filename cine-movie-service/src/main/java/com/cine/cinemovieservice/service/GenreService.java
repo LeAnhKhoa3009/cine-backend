@@ -1,6 +1,7 @@
 package com.cine.cinemovieservice.service;
 
 import com.cine.cinemovieservice.dto.CreateGenreRequestDTO;
+import com.cine.cinemovieservice.dto.GenreResponseDTO;
 import com.cine.cinemovieservice.dto.UpdateGenreRequestDTO;
 import com.cine.cinemovieservice.entity.Genre;
 
@@ -10,7 +11,7 @@ import java.util.Set;
 
 public interface GenreService {
 
-    List<Genre> fetchAll();
+    List<GenreResponseDTO> fetchAll();
 
     Optional<Genre> fetchById(Long id);
 
@@ -21,4 +22,6 @@ public interface GenreService {
     void delete(Long id);
 
     List<Genre> fetchByIds(Set<Long> ids);
+
+    Optional<GenreResponseDTO> restore(Long id);
 }
