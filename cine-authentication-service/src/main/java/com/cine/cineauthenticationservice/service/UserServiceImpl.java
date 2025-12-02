@@ -80,7 +80,10 @@ public class UserServiceImpl implements UserService {
                     log.error("Email cannot be changed");
                     throw new RuntimeException("Email cannot be changed");
                 }
-                String encodedPassword = StringUtils.isBlank(saveUserRequestDTO.getPassword()) ? passwordEncoder.encode(saveUserRequestDTO.getPassword()) : existedUser.getPassword();
+                // If password is blank, keep the existing password; otherwise, encode the new password
+                String encodedPassword = StringUtils.isBlank(saveUserRequestDTO.getPassword()) 
+                    ? existedUser.getPassword() 
+                    : passwordEncoder.encode(saveUserRequestDTO.getPassword());
                 User updatedUser = userRepository.save(createUserFromRequestDto(saveUserRequestDTO, encodedPassword));
                 return Optional.of(updatedUser).map(this::retrieveUserDtoFromUser).orElse(null);
 
