@@ -104,7 +104,7 @@ public class GatewayConfiguration {
                                 .filters(jwtFilterSpec::filterForAdmin)
                                 .uri(serviceLocatorConfiguration.getMovieServiceHost()))
                 .route("cine-movie-service-public", r ->
-                    r.path("/api/v1/movies", "/api/v1/movies/*")
+                    r.path("/api/v1/movies", "/api/v1/movies/*","/api/v1/genres", "/api/v1/genres/*")
                         .and()
                         .method("GET")
                         .uri(serviceLocatorConfiguration.getMovieServiceHost()))
