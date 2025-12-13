@@ -7,10 +7,13 @@ import com.cine.cinemovieservice.entity.Genre;
 import com.cine.cinemovieservice.entity.Movie;
 import com.cine.cinemovieservice.repository.GenresRepository;
 import com.cine.cinemovieservice.repository.MovieRepository;
+import com.cine.cinemovieservice.specification.BaseSpecification;
+import com.cine.cinemovieservice.specification.MovieSpecification;
 import com.cine.cinemovieservice.validator.MovieValidator;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -36,18 +39,23 @@ public class MovieServiceImpl implements MovieService{
 
 
     @Override
-    public Page<MovieResponseDTO> fetchAll(Pageable pageable) {
+    public Page<MovieResponseDTO> fetchAll(Pageable pageable, Long genreId) {
         try {
-            log.info("Retrieving all movies");
+            log.info("Retrieving all movies with filter genreId={}", genreId);
 
-            Page<Movie> moviePage = movieRepository.findAll(pageable);
+            Specification<Movie> specification = BaseSpecification.<Movie>notDeleted()
+                    .and(MovieSpecification.hasGenreId(genreId));
+
+            Page<Movie> moviePage = movieRepository.findAll(specification, pageable);
 
             return moviePage.map(this::mapToDto);
+
         } catch (Exception e) {
-            log.error("Error fetching all movies: {}", e.getMessage());
+            log.error("Error fetching movies: {}", e.getMessage());
             return Page.empty();
         }
     }
+
 
     @Override
     public Optional<MovieResponseDTO> fetchById(Long id) {

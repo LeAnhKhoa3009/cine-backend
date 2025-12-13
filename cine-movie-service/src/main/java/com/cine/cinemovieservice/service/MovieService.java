@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public interface MovieService {
 
-    Page<MovieResponseDTO> fetchAll(Pageable pageable);
+    Page<MovieResponseDTO> fetchAll(Pageable pageable, Long genreId);
 
     Optional<MovieResponseDTO> fetchById(Long id);
 

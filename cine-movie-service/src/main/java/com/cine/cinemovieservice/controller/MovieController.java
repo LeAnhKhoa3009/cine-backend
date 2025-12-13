@@ -33,10 +33,11 @@ public class MovieController {
     @Tag(name = "Fetch Movies")
     public ResponseEntity<ApiResponse<Page<MovieResponseDTO>>> fetchAll(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) Long genreId) {
         try {
             Pageable pagination = Pageable.ofSize(size).withPage(page);
-            Page<MovieResponseDTO> movies = movieService.fetchAll(pagination);
+            Page<MovieResponseDTO> movies = movieService.fetchAll(pagination, genreId);
 
             return ResponseEntity.ok(
                     ApiResponse.<Page<MovieResponseDTO>>builder()

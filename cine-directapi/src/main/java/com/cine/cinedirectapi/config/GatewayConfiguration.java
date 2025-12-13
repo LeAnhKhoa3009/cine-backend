@@ -100,10 +100,14 @@ public class GatewayConfiguration {
                 .route("cine-movie-service", r ->
                         r.path("/api/v1/movies/**", "/api/v1/genres/**", "/api/v1/rooms/**", "/api/v1/seats/**", "/api/v1/images/**", "/api/v1/folders/**")
                                 .and()
-                                .method("POST", "PUT", "GET", "DELETE")
+                                .method("POST", "PUT", "DELETE")
                                 .filters(jwtFilterSpec::filterForAdmin)
                                 .uri(serviceLocatorConfiguration.getMovieServiceHost()))
-
+                .route("cine-movie-service-public", r ->
+                    r.path("/api/v1/movies", "/api/v1/movies/*","/api/v1/genres", "/api/v1/genres/*", "/api/v1/images/**", "/api/v1/folders/**")
+                        .and()
+                        .method("GET")
+                        .uri(serviceLocatorConfiguration.getMovieServiceHost()))
                 .build();
     }
 }
