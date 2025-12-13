@@ -1,6 +1,7 @@
 package com.cine.cinemovieservice.service;
 
 import com.cine.cinemovieservice.dto.CreateGenreRequestDTO;
+import com.cine.cinemovieservice.dto.GenreResponseDTO;
 import com.cine.cinemovieservice.dto.UpdateGenreRequestDTO;
 import com.cine.cinemovieservice.entity.Genre;
 import com.cine.cinemovieservice.repository.GenresRepository;
@@ -25,14 +26,18 @@ public class GenreServiceImpl implements GenreService{
     }
 
     @Override
-    public List<Genre> fetchAll() {
+    public List<GenreResponseDTO> fetchAll() {
         try {
-            return genresRepository.findAll();
-        }catch (Exception e){
-            log.error(e.getMessage());
+            return genresRepository.findAll()
+                    .stream()
+                    .map(this::mapToDto)
+                    .toList();
+        } catch (Exception e) {
+            log.error("Error fetching all genres: {}", e.getMessage());
             return List.of();
         }
     }
+
 
     @Override
     public Optional<Genre> fetchById(Long id) {
@@ -98,6 +103,28 @@ public class GenreServiceImpl implements GenreService{
         }
     }
 
+    @Override
+    public Optional<GenreResponseDTO> restore(Long id) {
+        try {
+            Optional<Genre> optionalGenre = genresRepository.findById(id);
+
+            if (optionalGenre.isEmpty()) {
+                log.error("Genre not found with id {}", id);
+                return Optional.empty();
+            }
+
+            Genre genre = optionalGenre.get();
+            genre.setDeleted(false);
+            Genre restoredGenre = genresRepository.save(genre);
+
+            return Optional.of(mapToDto(restoredGenre));
+
+        } catch (Exception e) {
+            log.error("Error restoring genre with id {}: {}", id, e.getMessage());
+            return Optional.empty();
+        }
+    }
+
     private Genre createGenreFromDTO(CreateGenreRequestDTO createGenreRequestDTO) {
         return Genre.builder()
                 .name(createGenreRequestDTO.getName())
@@ -107,5 +134,14 @@ public class GenreServiceImpl implements GenreService{
     private void updateGenreFromDTO(Genre targetGenre, UpdateGenreRequestDTO updateGenreRequestDTO) {
         targetGenre.setName(updateGenreRequestDTO.getName());
         targetGenre.setIcon(updateGenreRequestDTO.getIcon());
+    }
+
+    private GenreResponseDTO mapToDto(Genre genre) {
+        return GenreResponseDTO.builder()
+                .id(genre.getId())
+                .name(genre.getName())
+                .icon(genre.getIcon())
+                .deleted(genre.getDeleted())
+                .build();
     }
 }

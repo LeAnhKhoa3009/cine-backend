@@ -2,6 +2,7 @@ package com.cine.cinemovieservice.controller;
 
 import com.cine.cinemovieservice.dto.ApiResponse;
 import com.cine.cinemovieservice.dto.CreateGenreRequestDTO;
+import com.cine.cinemovieservice.dto.GenreResponseDTO;
 import com.cine.cinemovieservice.dto.UpdateGenreRequestDTO;
 import com.cine.cinemovieservice.entity.Genre;
 import com.cine.cinemovieservice.service.GenreService;
@@ -26,22 +27,27 @@ public class GenreController {
 
     @GetMapping
     @Tag(name = "Fetch All Genres")
-    public ResponseEntity<ApiResponse<List<Genre>>> fetchAll() {
+    public ResponseEntity<ApiResponse<List<GenreResponseDTO>>> fetchAll() {
         try {
+            List<GenreResponseDTO> genres = genreService.fetchAll();
+
             return ResponseEntity.ok(
-                    ApiResponse.<List<Genre>>builder()
+                    ApiResponse.<List<GenreResponseDTO>>builder()
                             .status(ApiResponse.ApiResponseStatus.SUCCESS)
-                            .data(genreService.fetchAll())
+                            .data(genres)
+                            .message("Fetched all genres successfully")
                             .build()
             );
+
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.<List<Genre>>builder()
+                    .body(ApiResponse.<List<GenreResponseDTO>>builder()
                             .status(ApiResponse.ApiResponseStatus.ERROR)
                             .message("Internal error. Please contact administrator.")
                             .build());
         }
     }
+
 
     @GetMapping("/{id}")
     @Tag(name = "Fetch Genre by ID")
@@ -156,4 +162,37 @@ public class GenreController {
                             .build());
         }
     }
+
+    @PutMapping("/{id}/restore")
+    @Tag(name = "Restore Genre")
+    public ResponseEntity<ApiResponse<GenreResponseDTO>> restore(@PathVariable @NotNull Long id) {
+        try {
+            Optional<GenreResponseDTO> restoredGenre = genreService.restore(id);
+
+            if (restoredGenre.isEmpty()) {
+                return ResponseEntity
+                        .status(HttpStatus.NOT_FOUND)
+                        .body(ApiResponse.<GenreResponseDTO>builder()
+                                .status(ApiResponse.ApiResponseStatus.FAILURE)
+                                .message("Genre not found or not deleted with id " + id)
+                                .build());
+            }
+
+            return ResponseEntity
+                    .ok(ApiResponse.<GenreResponseDTO>builder()
+                            .status(ApiResponse.ApiResponseStatus.SUCCESS)
+                            .data(restoredGenre.get())
+                            .message("Genre restored successfully")
+                            .build());
+
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.<GenreResponseDTO>builder()
+                            .status(ApiResponse.ApiResponseStatus.ERROR)
+                            .message("Internal error. Please contact administrator.")
+                            .build());
+        }
+    }
+
 }
